@@ -109,6 +109,18 @@ export default function AgentEditor() {
           </p>
         </div>
         <div className="flex items-center gap-2">
+          {!isNew && (
+            <Button
+              variant="destructive"
+              onClick={async () => {
+                if (!confirm("Delete this agent? This cannot be undone.")) return;
+                await fetch(`/agents/${id}`, { method: "DELETE" });
+                navigate("/");
+              }}
+            >
+              Delete Agent
+            </Button>
+          )}
           <Button variant="outline" onClick={exportJson}>Export JSON</Button>
           <Button variant="outline" onClick={importJson}>Import JSON</Button>
           <input ref={fileRef} type="file" accept="application/json" className="hidden" onChange={onImportFile} />
