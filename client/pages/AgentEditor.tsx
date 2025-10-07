@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { FlowCanvas } from "@/components/flow/FlowCanvas";
 import { createAgent, getAgent, getTools, updateAgent } from "@/services/api";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
 
 export default function AgentEditor() {
   const { id } = useParams();
@@ -17,6 +18,7 @@ export default function AgentEditor() {
   const [tools, setTools] = useState<Record<string, any>>({});
   const [initialQC, setInitialQC] = useState<Record<string, any> | null>(null);
   const builtQC = useRef<Record<string, any> | null>(null);
+  const [settingsOpen, setSettingsOpen] = useState(false);
 
   useEffect(() => {
     (async () => {

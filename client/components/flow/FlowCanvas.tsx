@@ -17,6 +17,7 @@ import "@xyflow/react/dist/style.css";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
 
 export type ToolMap = Record<string, { name: string } & Record<string, any>>;
 
@@ -79,6 +80,7 @@ export function FlowCanvas({ tools, initialQuestionClass, onBuildQuestionClass }
   const [nodes, setNodes, onNodesChange] = useNodesState<FlowNodeData>([]);
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
   const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [dialogOpen, setDialogOpen] = useState(false);
 
   // Build initial graph
   useEffect(() => {
@@ -155,6 +157,7 @@ export function FlowCanvas({ tools, initialQuestionClass, onBuildQuestionClass }
   );
 
   const selectedNode = useMemo(() => nodes.find((n) => n.id === selectedId), [nodes, selectedId]);
+  const nodeTypes = useMemo(() => ({ ...baseNodeTypes, toolNode: (p: any) => <ToolNode {...p} tools={tools} /> }), [tools]);
 
   const updateSelected = (updater: (data: any) => any) => {
     if (!selectedNode) return;
@@ -167,6 +170,8 @@ export function FlowCanvas({ tools, initialQuestionClass, onBuildQuestionClass }
       ...nds,
       { id, type: "classNode", position: { x: 300, y: (nds.length + 1) * 40 }, data: { type: "class", name: "New Class", description: "" } },
     ]);
+    setSelectedId(id);
+    setDialogOpen(true);
   };
 
   const addTool = () => {
@@ -175,6 +180,8 @@ export function FlowCanvas({ tools, initialQuestionClass, onBuildQuestionClass }
       ...nds,
       { id, type: "toolNode", position: { x: 600, y: (nds.length + 1) * 40 }, data: { type: "tools", toolKey: "no_tool" } },
     ]);
+    setSelectedId(id);
+    setDialogOpen(true);
   };
 
   const removeSelected = () => {
@@ -255,7 +262,7 @@ export function FlowCanvas({ tools, initialQuestionClass, onBuildQuestionClass }
           <Button size="sm" variant="secondary" onClick={addTool}>Add Tool</Button>
           <span className="ml-auto text-xs text-muted-foreground">Connect: drag from node dots</span>
         </div>
-        <div className="h-[520px] rounded-lg border">
+        <div className="h-[75vh] rounded-lg border">
           <ReactFlow
             nodes={nodes}
             edges={edges}
@@ -263,8 +270,11 @@ export function FlowCanvas({ tools, initialQuestionClass, onBuildQuestionClass }
             onEdgesChange={onEdgesChange}
             onConnect={onConnect}
             isValidConnection={isValidConnection}
-            onNodeClick={(_, n) => setSelectedId(n.id)}
-            nodeTypes={{ ...baseNodeTypes, toolNode: (p: any) => <ToolNode {...p} tools={tools} /> }}
+            onNodeClick={(_, n) => {
+              setSelectedId(n.id);
+              setDialogOpen(true);
+            }}
+            nodeTypes={nodeTypes}
             fitView
           >
             <Background />
@@ -273,66 +283,62 @@ export function FlowCanvas({ tools, initialQuestionClass, onBuildQuestionClass }
           </ReactFlow>
         </div>
       </div>
-      <div className="rounded-xl border bg-white p-4">
-        <h3 className="text-sm font-semibold">Selected Node</h3>
-        {!selectedNode && (
-          <p className="mt-2 text-xs text-muted-foreground">Select a node to edit</p>
-        )}
+      <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
         {selectedNode && selectedNode.type === "classNode" && (
-          <div className="mt-3 space-y-3">
-            <div>
-              <label className="mb-1 block text-xs font-medium">Class Name</label>
-              <Input
-                value={(selectedNode.data as any).name}
-                onChange={(e) => updateSelected((d) => ({ ...d, name: e.target.value }))}
-              />
+          <DialogContent>
+            <h3 className="text-sm font-semibold mb-2">Edit Class</h3>
+            <div className="space-y-3">
+              <div>
+                <label className="mb-1 block text-xs font-medium">Class Name</label>
+                <Input
+                  value={(selectedNode.data as any).name}
+                  onChange={(e) => updateSelected((d) => ({ ...d, name: e.target.value }))}
+                />
+              </div>
+              <div>
+                <label className="mb-1 block text-xs font-medium">Description</label>
+                <Input
+                  value={(selectedNode.data as any).description}
+                  onChange={(e) => updateSelected((d) => ({ ...d, description: e.target.value }))}
+                />
+              </div>
+              <div className="pt-2 flex justify-between">
+                <Button variant="destructive" size="sm" onClick={() => { removeSelected(); setDialogOpen(false); }}>Delete</Button>
+                <Button size="sm" onClick={() => setDialogOpen(false)}>Done</Button>
+              </div>
             </div>
-            <div>
-              <label className="mb-1 block text-xs font-medium">Description</label>
-              <Input
-                value={(selectedNode.data as any).description}
-                onChange={(e) => updateSelected((d) => ({ ...d, description: e.target.value }))}
-              />
-            </div>
-            <div className="pt-2">
-              <Button variant="destructive" size="sm" onClick={removeSelected}>Delete</Button>
-            </div>
-          </div>
+          </DialogContent>
         )}
         {selectedNode && selectedNode.type === "toolNode" && (
-          <div className="mt-3 space-y-3">
-            <div>
-              <label className="mb-1 block text-xs font-medium">Tool</label>
-              <Select
-                value={(selectedNode.data as any).toolKey}
-                onValueChange={(v) => updateSelected((d) => ({ ...d, toolKey: v }))}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Select tool" />
-                </SelectTrigger>
-                <SelectContent>
-                  {Object.entries(tools).map(([k, v]) => (
-                    <SelectItem key={k} value={k}>
-                      {v.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+          <DialogContent>
+            <h3 className="text-sm font-semibold mb-2">Edit Tool</h3>
+            <div className="space-y-3">
+              <div>
+                <label className="mb-1 block text-xs font-medium">Tool</label>
+                <Select
+                  value={(selectedNode.data as any).toolKey}
+                  onValueChange={(v) => updateSelected((d) => ({ ...d, toolKey: v }))}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select tool" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {Object.entries(tools).map(([k, v]) => (
+                      <SelectItem key={k} value={k}>
+                        {v.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="pt-2 flex justify-between">
+                <Button variant="destructive" size="sm" onClick={() => { removeSelected(); setDialogOpen(false); }}>Delete</Button>
+                <Button size="sm" onClick={() => setDialogOpen(false)}>Done</Button>
+              </div>
             </div>
-            <div className="pt-2">
-              <Button variant="destructive" size="sm" onClick={removeSelected}>Delete</Button>
-            </div>
-          </div>
+          </DialogContent>
         )}
-        {selectedNode && selectedNode.id === "start" && (
-          <div className="mt-3">
-            <p className="text-xs text-muted-foreground">The Start node cannot be modified</p>
-          </div>
-        )}
-        <div className="mt-6">
-          <Button size="sm" variant="outline" onClick={buildQuestionClass}>Preview JSON</Button>
-        </div>
-      </div>
+      </Dialog>
     </div>
   );
 }
