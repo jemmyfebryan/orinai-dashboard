@@ -5,11 +5,27 @@ import { createRoot } from "react-dom/client";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
+import Login from "./pages/Login";
+import AgentEditor from "./pages/AgentEditor";
+import Layout from "./components/layout/Layout";
 
 const queryClient = new QueryClient();
+
+function isAuthed() {
+  try {
+    return localStorage.getItem("orin_auth") === "1";
+  } catch {
+    return false;
+  }
+}
+
+function Protected({ children }: { children: React.ReactNode }) {
+  if (!isAuthed()) return <Navigate to="/login" replace />;
+  return <>{children}</>;
+}
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
@@ -18,8 +34,77 @@ const App = () => (
       <Sonner />
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<Index />} />
-          {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+          <Route path="/login" element={<Login />} />
+          <Route
+            path="/"
+            element={
+              <Protected>
+                <Layout>
+                  <Index />
+                </Layout>
+              </Protected>
+            }
+          />
+          <Route
+            path="/agents/:id"
+            element={
+              <Protected>
+                <Layout>
+                  <AgentEditor />
+                </Layout>
+              </Protected>
+            }
+          />
+          <Route
+            path="/agents/new"
+            element={
+              <Protected>
+                <Layout>
+                  <AgentEditor />
+                </Layout>
+              </Protected>
+            }
+          />
+          <Route
+            path="/assign"
+            element={
+              <Protected>
+                <Layout>
+                  <div className="p-6">Assign Agent to WhatsApp Number (coming soon)</div>
+                </Layout>
+              </Protected>
+            }
+          />
+          <Route
+            path="/chat"
+            element={
+              <Protected>
+                <Layout>
+                  <div className="p-6">WhatsApp Chat (coming soon)</div>
+                </Layout>
+              </Protected>
+            }
+          />
+          <Route
+            path="/about"
+            element={
+              <Protected>
+                <Layout>
+                  <div className="p-6">About ORIN AI Chat Dashboard</div>
+                </Layout>
+              </Protected>
+            }
+          />
+          <Route
+            path="/how-it-works"
+            element={
+              <Protected>
+                <Layout>
+                  <div className="p-6">How it Works</div>
+                </Layout>
+              </Protected>
+            }
+          />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
