@@ -256,7 +256,7 @@ export function FlowCanvas({ tools, initialQuestionClass, onBuildQuestionClass }
             onConnect={onConnect}
             isValidConnection={isValidConnection}
             onNodeClick={(_, n) => setSelectedId(n.id)}
-            nodeTypes={{ startNode: nodeTypes.startNode, classNode: nodeTypes.classNode, toolNode: nodeTypes.toolNode as any }}
+            nodeTypes={{ ...baseNodeTypes, toolNode: (p: any) => <ToolNode {...p} tools={tools} /> }}
             fitView
           >
             <Background />
