@@ -86,6 +86,8 @@ export function FlowCanvas({ tools, initialQuestionClass, onBuildQuestionClass }
       type: "startNode",
       position: { x: 0, y: 0 },
       data: { type: "start" },
+      draggable: false,
+      selectable: false,
     };
 
     if (!initialQuestionClass || Object.keys(initialQuestionClass).length === 0) {
