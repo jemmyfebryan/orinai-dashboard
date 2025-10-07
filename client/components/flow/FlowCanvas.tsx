@@ -58,10 +58,9 @@ function ToolNode({ data, tools }: { data: Extract<FlowNodeData, { type: "tools"
   );
 }
 
-const nodeTypes = {
+const baseNodeTypes = {
   startNode: StartNode,
   classNode: (props: any) => <ClassNode {...props} />,
-  toolNode: (props: any) => <ToolNode {...props} tools={props.tools} />,
 };
 
 let nextId = 1;
