@@ -70,7 +70,9 @@ const App = () => (
             element={
               <Protected>
                 <Layout>
-                  <div className="p-6">Assign Agent to WhatsApp Number (coming soon)</div>
+                  <div className="p-6">
+                    Assign Agent to WhatsApp Number (coming soon)
+                  </div>
                 </Layout>
               </Protected>
             }

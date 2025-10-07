@@ -40,7 +40,9 @@ export default function Index() {
             onChange={(e) => setSearch(e.target.value)}
             className="w-64"
           />
-          <Button onClick={() => navigate("/agents/new")}>Create New Agent</Button>
+          <Button onClick={() => navigate("/agents/new")}>
+            Create New Agent
+          </Button>
         </div>
       </div>
 
@@ -71,7 +73,11 @@ export default function Index() {
               <Button size="sm" onClick={() => navigate(`/agents/${agent.id}`)}>
                 Open
               </Button>
-              <Button size="sm" variant="secondary" onClick={() => navigate(`/agents/${agent.id}`)}>
+              <Button
+                size="sm"
+                variant="secondary"
+                onClick={() => navigate(`/agents/${agent.id}`)}
+              >
                 Edit
               </Button>
             </div>

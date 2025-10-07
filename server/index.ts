@@ -96,7 +96,12 @@ export function createServer() {
   app.post("/login", (req, res) => {
     const { username, password } = req.body || {};
     if (username === "user" && password === "pass") {
-      res.cookie(COOKIE_NAME, "1", { httpOnly: false, sameSite: "none", secure: true, path: "/" });
+      res.cookie(COOKIE_NAME, "1", {
+        httpOnly: false,
+        sameSite: "none",
+        secure: true,
+        path: "/",
+      });
       return res.json({ ok: true });
     }
     return res.status(401).json({ error: "invalid credentials" });
@@ -119,7 +124,8 @@ export function createServer() {
                 description:
                   "Pertanyaan-pertanyaan yang bisa dijawab oleh database yang berisi summary kendaraan harian.\nGunakan subclass ini saat user bertanya tentang waktu operasional dalam kurun waktu harian, mingguan, bulanan, atau lebih lama.\nWaktu operasional menyakup moving dan idle. Jika user bertanya tentang pertanyaan general, tidak spesifik ke satu hari, melainkan setiap hari atau banyak hari, gunakan subclass ini.",
                 tools: "ds_operational_time",
-                instructions: "- Untuk keterangan waktu, tambahkan informasi dalam bentuk menit, jam, dan hari.",
+                instructions:
+                  "- Untuk keterangan waktu, tambahkan informasi dalam bentuk menit, jam, dan hari.",
               },
               report: {
                 name: "Report",
@@ -219,7 +225,8 @@ export function createServer() {
       question_class: b.question_class || {},
       question_class_system_prompt: b.question_class_system_prompt || "",
       final_response_system_prompt: b.final_response_system_prompt || "",
-      suggested_questions_system_prompt: b.suggested_questions_system_prompt || "",
+      suggested_questions_system_prompt:
+        b.suggested_questions_system_prompt || "",
     };
     agents.push(a);
     res.status(201).json(a);

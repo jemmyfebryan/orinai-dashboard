@@ -19,7 +19,9 @@ export default function Navbar() {
         <div className="flex items-center gap-6">
           <Link to="/" className="flex items-center gap-2">
             <div className="h-7 w-7 rounded bg-primary shadow ring-1 ring-primary/30" />
-            <span className="font-extrabold tracking-tight">ORIN AI Chat Dashboard</span>
+            <span className="font-extrabold tracking-tight">
+              ORIN AI Chat Dashboard
+            </span>
           </Link>
           <nav className="hidden md:flex items-center gap-1">
             {links.map((l) => (

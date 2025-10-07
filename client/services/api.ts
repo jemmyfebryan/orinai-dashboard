@@ -70,7 +70,10 @@ export async function updateAgent(id: number, payload: AgentPayload) {
 }
 
 export async function deleteAgent(id: number) {
-  const res = await fetch(`/agents/${id}`, { method: "DELETE", credentials: "include" });
+  const res = await fetch(`/agents/${id}`, {
+    method: "DELETE",
+    credentials: "include",
+  });
   if (!res.ok) throw new Error("Failed to delete agent");
   return res.json();
 }

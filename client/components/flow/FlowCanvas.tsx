@@ -16,7 +16,13 @@ import {
 import "@xyflow/react/dist/style.css";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 
 export type ToolMap = Record<string, { name: string } & Record<string, any>>;
@@ -39,18 +45,30 @@ const StartNode = () => (
   </div>
 );
 
-function ClassNode({ data }: { data: Extract<FlowNodeData, { type: "class" }> }) {
+function ClassNode({
+  data,
+}: {
+  data: Extract<FlowNodeData, { type: "class" }>;
+}) {
   return (
     <div className="w-64 rounded-lg border bg-white p-3 shadow-sm">
       <Handle type="target" position={Position.Left} />
       <div className="text-sm font-semibold">{data.name || "Class"}</div>
-      <p className="mt-1 line-clamp-3 text-xs text-muted-foreground">{data.description}</p>
+      <p className="mt-1 line-clamp-3 text-xs text-muted-foreground">
+        {data.description}
+      </p>
       <Handle type="source" position={Position.Right} />
     </div>
   );
 }
 
-function ToolNode({ data, tools }: { data: Extract<FlowNodeData, { type: "tools" }>; tools: ToolMap }) {
+function ToolNode({
+  data,
+  tools,
+}: {
+  data: Extract<FlowNodeData, { type: "tools" }>;
+  tools: ToolMap;
+}) {
   const label = tools?.[data.toolKey]?.name ?? data.toolKey ?? "Tool";
   return (
     <div className="w-64 rounded-lg border bg-white p-3 shadow-sm">
@@ -76,7 +94,11 @@ function slugify(input: string) {
     .replace(/__+/g, "_");
 }
 
-export function FlowCanvas({ tools, initialQuestionClass, onBuildQuestionClass }: FlowCanvasProps) {
+export function FlowCanvas({
+  tools,
+  initialQuestionClass,
+  onBuildQuestionClass,
+}: FlowCanvasProps) {
   const [nodes, setNodes, onNodesChange] = useNodesState<FlowNodeData>([]);
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
   const [selectedId, setSelectedId] = useState<string | null>(null);
@@ -93,7 +115,10 @@ export function FlowCanvas({ tools, initialQuestionClass, onBuildQuestionClass }
       selectable: false,
     };
 
-    if (!initialQuestionClass || Object.keys(initialQuestionClass).length === 0) {
+    if (
+      !initialQuestionClass ||
+      Object.keys(initialQuestionClass).length === 0
+    ) {
       setNodes([start]);
       setEdges([]);
       return;
@@ -109,29 +134,49 @@ export function FlowCanvas({ tools, initialQuestionClass, onBuildQuestionClass }
       return y;
     };
 
-    const addClassTree = (obj: any, depth: number, parentId: string, keyHint?: string) => {
+    const addClassTree = (
+      obj: any,
+      depth: number,
+      parentId: string,
+      keyHint?: string,
+    ) => {
       const name = obj.name || keyHint || "Class";
       const id = genId();
-      newNodes.push({ id, type: "classNode", position: { x: depth * 300, y: nextY(depth) }, data: { type: "class", name, description: obj.description || "" } });
+      newNodes.push({
+        id,
+        type: "classNode",
+        position: { x: depth * 300, y: nextY(depth) },
+        data: { type: "class", name, description: obj.description || "" },
+      });
       newEdges.push({ id: genId(), source: parentId, target: id });
       if (obj.tools) {
         const toolId = genId();
-        newNodes.push({ id: toolId, type: "toolNode", position: { x: (depth + 1) * 300, y: nextY(depth + 1) }, data: { type: "tools", toolKey: obj.tools } });
+        newNodes.push({
+          id: toolId,
+          type: "toolNode",
+          position: { x: (depth + 1) * 300, y: nextY(depth + 1) },
+          data: { type: "tools", toolKey: obj.tools },
+        });
         newEdges.push({ id: genId(), source: id, target: toolId });
       }
       if (obj.subclass) {
-        Object.entries(obj.subclass).forEach(([k, v]) => addClassTree(v as any, depth + 1, id, k));
+        Object.entries(obj.subclass).forEach(([k, v]) =>
+          addClassTree(v as any, depth + 1, id, k),
+        );
       }
     };
 
-    Object.entries(initialQuestionClass).forEach(([k, v]) => addClassTree(v as any, 1, "start", k));
+    Object.entries(initialQuestionClass).forEach(([k, v]) =>
+      addClassTree(v as any, 1, "start", k),
+    );
 
     setNodes(newNodes);
     setEdges(newEdges);
   }, [initialQuestionClass, setNodes, setEdges]);
 
   const onConnect = useCallback(
-    (connection: Connection) => setEdges((eds) => addEdge({ ...connection, animated: false }, eds)),
+    (connection: Connection) =>
+      setEdges((eds) => addEdge({ ...connection, animated: false }, eds)),
     [setEdges],
   );
 
@@ -144,11 +189,19 @@ export function FlowCanvas({ tools, initialQuestionClass, onBuildQuestionClass }
       const srcType = src.type;
       const tgtType = tgt.type;
       if (srcType === "startNode" && tgtType !== "classNode") return false;
-      if (srcType === "classNode" && !(tgtType === "classNode" || tgtType === "toolNode")) return false;
+      if (
+        srcType === "classNode" &&
+        !(tgtType === "classNode" || tgtType === "toolNode")
+      )
+        return false;
       if (srcType === "toolNode") return false;
       // Prevent multiple tool connections from one class
       if (srcType === "classNode" && tgtType === "toolNode") {
-        const already = edges.some((e) => e.source === src.id && nodes.find((n) => n.id === e.target)?.type === "toolNode");
+        const already = edges.some(
+          (e) =>
+            e.source === src.id &&
+            nodes.find((n) => n.id === e.target)?.type === "toolNode",
+        );
         if (already) return false;
       }
       return true;
@@ -156,19 +209,37 @@ export function FlowCanvas({ tools, initialQuestionClass, onBuildQuestionClass }
     [nodes, edges],
   );
 
-  const selectedNode = useMemo(() => nodes.find((n) => n.id === selectedId), [nodes, selectedId]);
-  const nodeTypes = useMemo(() => ({ ...baseNodeTypes, toolNode: (p: any) => <ToolNode {...p} tools={tools} /> }), [tools]);
+  const selectedNode = useMemo(
+    () => nodes.find((n) => n.id === selectedId),
+    [nodes, selectedId],
+  );
+  const nodeTypes = useMemo(
+    () => ({
+      ...baseNodeTypes,
+      toolNode: (p: any) => <ToolNode {...p} tools={tools} />,
+    }),
+    [tools],
+  );
 
   const updateSelected = (updater: (data: any) => any) => {
     if (!selectedNode) return;
-    setNodes((nds) => nds.map((n) => (n.id === selectedNode.id ? { ...n, data: updater(n.data) } : n)));
+    setNodes((nds) =>
+      nds.map((n) =>
+        n.id === selectedNode.id ? { ...n, data: updater(n.data) } : n,
+      ),
+    );
   };
 
   const addClass = () => {
     const id = genId();
     setNodes((nds) => [
       ...nds,
-      { id, type: "classNode", position: { x: 300, y: (nds.length + 1) * 40 }, data: { type: "class", name: "New Class", description: "" } },
+      {
+        id,
+        type: "classNode",
+        position: { x: 300, y: (nds.length + 1) * 40 },
+        data: { type: "class", name: "New Class", description: "" },
+      },
     ]);
     setSelectedId(id);
     setDialogOpen(true);
@@ -178,7 +249,12 @@ export function FlowCanvas({ tools, initialQuestionClass, onBuildQuestionClass }
     const id = genId();
     setNodes((nds) => [
       ...nds,
-      { id, type: "toolNode", position: { x: 600, y: (nds.length + 1) * 40 }, data: { type: "tools", toolKey: "no_tool" } },
+      {
+        id,
+        type: "toolNode",
+        position: { x: 600, y: (nds.length + 1) * 40 },
+        data: { type: "tools", toolKey: "no_tool" },
+      },
     ]);
     setSelectedId(id);
     setDialogOpen(true);
@@ -187,7 +263,11 @@ export function FlowCanvas({ tools, initialQuestionClass, onBuildQuestionClass }
   const removeSelected = () => {
     if (!selectedNode) return;
     if (selectedNode.id === "start") return;
-    setEdges((eds) => eds.filter((e) => e.source !== selectedNode.id && e.target !== selectedNode.id));
+    setEdges((eds) =>
+      eds.filter(
+        (e) => e.source !== selectedNode.id && e.target !== selectedNode.id,
+      ),
+    );
     setNodes((nds) => nds.filter((n) => n.id !== selectedNode.id));
     setSelectedId(null);
   };
@@ -217,7 +297,9 @@ export function FlowCanvas({ tools, initialQuestionClass, onBuildQuestionClass }
       const data = node.data as Extract<FlowNodeData, { type: "class" }>;
       const obj: any = { name: data.name, description: data.description };
       const children = adj.get(nodeId) || [];
-      const childNodes = children.map((id) => idToNode.get(id)!).filter(Boolean);
+      const childNodes = children
+        .map((id) => idToNode.get(id)!)
+        .filter(Boolean);
       const toolChild = childNodes.find((n) => n.type === "toolNode");
       if (toolChild) obj.tools = (toolChild.data as any).toolKey;
       const classChildren = childNodes.filter((n) => n.type === "classNode");
@@ -258,9 +340,15 @@ export function FlowCanvas({ tools, initialQuestionClass, onBuildQuestionClass }
     <div className="grid gap-4 lg:grid-cols-[1fr_320px]">
       <div className="rounded-xl border bg-white p-2">
         <div className="mb-2 flex items-center gap-2">
-          <Button size="sm" onClick={addClass}>Add Class</Button>
-          <Button size="sm" variant="secondary" onClick={addTool}>Add Tool</Button>
-          <span className="ml-auto text-xs text-muted-foreground">Connect: drag from node dots</span>
+          <Button size="sm" onClick={addClass}>
+            Add Class
+          </Button>
+          <Button size="sm" variant="secondary" onClick={addTool}>
+            Add Tool
+          </Button>
+          <span className="ml-auto text-xs text-muted-foreground">
+            Connect: drag from node dots
+          </span>
         </div>
         <div className="h-[75vh] rounded-lg border">
           <ReactFlow
@@ -289,22 +377,44 @@ export function FlowCanvas({ tools, initialQuestionClass, onBuildQuestionClass }
             <h3 className="text-sm font-semibold mb-2">Edit Class</h3>
             <div className="space-y-3">
               <div>
-                <label className="mb-1 block text-xs font-medium">Class Name</label>
+                <label className="mb-1 block text-xs font-medium">
+                  Class Name
+                </label>
                 <Input
                   value={(selectedNode.data as any).name}
-                  onChange={(e) => updateSelected((d) => ({ ...d, name: e.target.value }))}
+                  onChange={(e) =>
+                    updateSelected((d) => ({ ...d, name: e.target.value }))
+                  }
                 />
               </div>
               <div>
-                <label className="mb-1 block text-xs font-medium">Description</label>
+                <label className="mb-1 block text-xs font-medium">
+                  Description
+                </label>
                 <Input
                   value={(selectedNode.data as any).description}
-                  onChange={(e) => updateSelected((d) => ({ ...d, description: e.target.value }))}
+                  onChange={(e) =>
+                    updateSelected((d) => ({
+                      ...d,
+                      description: e.target.value,
+                    }))
+                  }
                 />
               </div>
               <div className="pt-2 flex justify-between">
-                <Button variant="destructive" size="sm" onClick={() => { removeSelected(); setDialogOpen(false); }}>Delete</Button>
-                <Button size="sm" onClick={() => setDialogOpen(false)}>Done</Button>
+                <Button
+                  variant="destructive"
+                  size="sm"
+                  onClick={() => {
+                    removeSelected();
+                    setDialogOpen(false);
+                  }}
+                >
+                  Delete
+                </Button>
+                <Button size="sm" onClick={() => setDialogOpen(false)}>
+                  Done
+                </Button>
               </div>
             </div>
           </DialogContent>
@@ -317,7 +427,9 @@ export function FlowCanvas({ tools, initialQuestionClass, onBuildQuestionClass }
                 <label className="mb-1 block text-xs font-medium">Tool</label>
                 <Select
                   value={(selectedNode.data as any).toolKey}
-                  onValueChange={(v) => updateSelected((d) => ({ ...d, toolKey: v }))}
+                  onValueChange={(v) =>
+                    updateSelected((d) => ({ ...d, toolKey: v }))
+                  }
                 >
                   <SelectTrigger>
                     <SelectValue placeholder="Select tool" />
@@ -332,8 +444,19 @@ export function FlowCanvas({ tools, initialQuestionClass, onBuildQuestionClass }
                 </Select>
               </div>
               <div className="pt-2 flex justify-between">
-                <Button variant="destructive" size="sm" onClick={() => { removeSelected(); setDialogOpen(false); }}>Delete</Button>
-                <Button size="sm" onClick={() => setDialogOpen(false)}>Done</Button>
+                <Button
+                  variant="destructive"
+                  size="sm"
+                  onClick={() => {
+                    removeSelected();
+                    setDialogOpen(false);
+                  }}
+                >
+                  Delete
+                </Button>
+                <Button size="sm" onClick={() => setDialogOpen(false)}>
+                  Done
+                </Button>
               </div>
             </div>
           </DialogContent>
