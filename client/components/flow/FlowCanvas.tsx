@@ -239,6 +239,11 @@ export function FlowCanvas({ tools, initialQuestionClass, onBuildQuestionClass }
     return qc;
   };
 
+  useEffect(() => {
+    buildQuestionClass();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [nodes, edges]);
+
   return (
     <div className="grid gap-4 lg:grid-cols-[1fr_320px]">
       <div className="rounded-xl border bg-white p-2">
