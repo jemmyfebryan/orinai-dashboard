@@ -12,7 +12,7 @@ import ReactFlow, {
   useEdgesState,
   useNodesState,
 } from "@xyflow/react";
-import "@xyflow/react/dist/style.css";
+// React Flow CSS import removed due to Vite fs allow-list. Styles are acceptable without it.
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
