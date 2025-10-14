@@ -22,22 +22,22 @@ export async function login(username: string, password: string) {
 }
 
 export async function getAgents(): Promise<AgentSummary[]> {
-  const res = await fetch("http://localhost:8080/agents", { credentials: "include" });
+  const res = await fetch("/agents", { credentials: "include" });
   if (!res.ok) throw new Error("Failed to fetch agents");
   return res.json();
 }
 
 export async function getAgent(id: number) {
-  const res = await fetch(`http://localhost:8080/agents/${id}`, { credentials: "include" });
+  const res = await fetch(`/agents/${id}`, { credentials: "include" });
   if (!res.ok) throw new Error("Failed to fetch agent");
   return res.json();
 }
 
 export async function createAgent(payload: AgentPayload) {
-  const res = await fetch("http://localhost:8080/agents", {
+  const res = await fetch("/agents", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    credentials: "include",
+    // credentials: "include",
     body: JSON.stringify(payload),
   });
   if (!res.ok) {
@@ -52,7 +52,7 @@ export async function createAgent(payload: AgentPayload) {
 }
 
 export async function updateAgent(id: number, payload: AgentPayload) {
-  const res = await fetch(`http://localhost:8080/agents/${id}`, {
+  const res = await fetch(`/agents/${id}`, {
     method: "PUT",
     headers: { "Content-Type": "application/json" },
     credentials: "include",
@@ -69,8 +69,59 @@ export async function updateAgent(id: number, payload: AgentPayload) {
   return res.json();
 }
 
+export interface WhatsappAssignment {
+  phoneNumber: string;
+  agentId: number | null;
+  agentName: string | null;
+}
+
+export async function getWhatsappNumbers(): Promise<WhatsappAssignment[]> {
+  try {
+    const res = await fetch('/whatsapp/number', {
+      credentials: 'include'
+    });
+    
+    if (!res.ok) {
+      throw new Error(`Failed to fetch WhatsApp numbers: ${res.statusText}`);
+    }
+    
+    const data = await res.json();
+    
+    return data.map((item: any) => ({
+      phoneNumber: item.phone_number,
+      agentId: item.agent_id,
+      agentName: item.agent_name
+    }));
+  } catch (error) {
+    console.error('Error fetching WhatsApp numbers:', error);
+    throw new Error('Failed to load WhatsApp numbers. Please try again later.');
+  }
+}
+
+export async function assignAgentToWhatsapp(phoneNumber: string, agentId: number | null): Promise<void> {
+  try {
+    const res = await fetch('/whatsapp/number', {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
+      body: JSON.stringify({
+        phone_number: phoneNumber,
+        agent_id: agentId
+      })
+    });
+    
+    if (!res.ok) {
+      const errorData = await res.json().catch(() => ({}));
+      throw new Error(errorData.message || `Failed to update assignment: ${res.statusText}`);
+    }
+  } catch (error) {
+    console.error('Error updating assignment:', error);
+    throw new Error('Failed to update assignment. Please try again.');
+  }
+}
+
 export async function deleteAgent(id: number) {
-  const res = await fetch(`http://localhost:8080/agents/${id}`, {
+  const res = await fetch(`/agents/${id}`, {
     method: "DELETE",
     credentials: "include",
   });
@@ -139,7 +190,7 @@ export const FALLBACK_TOOLS: Record<string, any> = {
 
 export async function getTools(): Promise<Record<string, any>> {
   try {
-    const res = await fetch("http://localhost:8080/tools", { credentials: "include" });
+    const res = await fetch("/tools", { credentials: "include" });
     if (!res.ok) throw new Error("Failed to fetch tools");
     return await res.json();
   } catch {
@@ -148,4 +199,44 @@ export async function getTools(): Promise<Record<string, any>> {
   // } catch {
   //   return FALLBACK_TOOLS;
   // }
+}
+
+export async function getWhatsappContacts(): Promise<{ phone_number: string }[]> {
+  try {
+    const res = await fetch('/whatsapp/contacts', {
+      credentials: 'include'
+    });
+    if (!res.ok) throw new Error('Failed to fetch contacts');
+    return res.json();
+  } catch (error) {
+    throw new Error(`Error fetching contacts: ${(error as Error).message}`);
+  }
+}
+
+export async function getWhatsappChatHistory(
+  phoneNumber: string
+): Promise<Array<{ role: string; content: string; timestamp?: number }>> {
+  try {
+    const res = await fetch(`/whatsapp/chat_history/${phoneNumber}`, {
+      credentials: 'include'
+    });
+    if (!res.ok) throw new Error('Failed to fetch chat history');
+    return res.json();
+  } catch (error) {
+    throw new Error(`Error fetching chat history: ${(error as Error).message}`);
+  }
+}
+
+export async function getWhatsappProfile(
+  phoneNumber: string
+): Promise<{ profile_image: string; contact_name: string; description: string }> {
+  try {
+    const res = await fetch(`/whatsapp/profile/${phoneNumber}`, {
+      credentials: 'include'
+    });
+    if (!res.ok) throw new Error('Failed to fetch profile');
+    return res.json();
+  } catch (error) {
+    throw new Error(`Error fetching profile: ${(error as Error).message}`);
+  }
 }

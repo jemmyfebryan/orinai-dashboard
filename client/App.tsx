@@ -10,6 +10,8 @@ import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import Login from "./pages/Login";
 import AgentEditor from "./pages/AgentEditor";
+import AgentAssignment from "./pages/AgentAssignment";
+import ChatPage from "./pages/ChatPage";
 import Layout from "./components/layout/Layout";
 
 const queryClient = new QueryClient();
@@ -68,9 +70,7 @@ const App = () => (
             element={
               <Protected>
                 <Layout>
-                  <div className="p-6">
-                    Assign Agent to WhatsApp Number (coming soon)
-                  </div>
+                  <AgentAssignment />
                 </Layout>
               </Protected>
             }
@@ -80,7 +80,7 @@ const App = () => (
             element={
               <Protected>
                 <Layout>
-                  <div className="p-6">WhatsApp Chat (coming soon)</div>
+                  <ChatPage />
                 </Layout>
               </Protected>
             }
