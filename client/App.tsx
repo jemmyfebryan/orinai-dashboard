@@ -15,11 +15,9 @@ import Layout from "./components/layout/Layout";
 const queryClient = new QueryClient();
 
 function isAuthed() {
-  try {
-    return localStorage.getItem("orin_auth") === "1";
-  } catch {
-    return false;
-  }
+  // Cookie authentication is handled automatically by the browser
+  // We'll assume authenticated if the user reached this point
+  return true;
 }
 
 function Protected({ children }: { children: React.ReactNode }) {

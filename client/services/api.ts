@@ -22,19 +22,19 @@ export async function login(username: string, password: string) {
 }
 
 export async function getAgents(): Promise<AgentSummary[]> {
-  const res = await fetch("/agents", { credentials: "include" });
+  const res = await fetch("http://localhost:8080/agents", { credentials: "include" });
   if (!res.ok) throw new Error("Failed to fetch agents");
   return res.json();
 }
 
 export async function getAgent(id: number) {
-  const res = await fetch(`/agents/${id}`, { credentials: "include" });
+  const res = await fetch(`http://localhost:8080/agents/${id}`, { credentials: "include" });
   if (!res.ok) throw new Error("Failed to fetch agent");
   return res.json();
 }
 
 export async function createAgent(payload: AgentPayload) {
-  const res = await fetch("/agents", {
+  const res = await fetch("http://localhost:8080/agents", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     credentials: "include",
@@ -52,7 +52,7 @@ export async function createAgent(payload: AgentPayload) {
 }
 
 export async function updateAgent(id: number, payload: AgentPayload) {
-  const res = await fetch(`/agents/${id}`, {
+  const res = await fetch(`http://localhost:8080/agents/${id}`, {
     method: "PUT",
     headers: { "Content-Type": "application/json" },
     credentials: "include",
@@ -70,7 +70,7 @@ export async function updateAgent(id: number, payload: AgentPayload) {
 }
 
 export async function deleteAgent(id: number) {
-  const res = await fetch(`/agents/${id}`, {
+  const res = await fetch(`http://localhost:8080/agents/${id}`, {
     method: "DELETE",
     credentials: "include",
   });
@@ -139,10 +139,13 @@ export const FALLBACK_TOOLS: Record<string, any> = {
 
 export async function getTools(): Promise<Record<string, any>> {
   try {
-    const res = await fetch("/tools", { credentials: "include" });
+    const res = await fetch("http://localhost:8080/tools", { credentials: "include" });
     if (!res.ok) throw new Error("Failed to fetch tools");
     return await res.json();
   } catch {
-    return FALLBACK_TOOLS;
+    return {};
   }
+  // } catch {
+  //   return FALLBACK_TOOLS;
+  // }
 }

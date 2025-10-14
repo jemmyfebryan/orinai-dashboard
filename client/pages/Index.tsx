@@ -61,6 +61,10 @@ export default function Index() {
                 <Button
                   variant="ghost"
                   onClick={async () => {
+                    if (!confirm("Delete this agent? This cannot be undone.")) {
+                      return; // stop if the user cancels
+                    }
+
                     await deleteAgent(agent.id);
                     load();
                   }}
@@ -70,9 +74,9 @@ export default function Index() {
               </div>
             </div>
             <div className="mt-4 flex items-center gap-2">
-              <Button size="sm" onClick={() => navigate(`/agents/${agent.id}`)}>
+              {/* <Button size="sm" onClick={() => navigate(`/agents/${agent.id}`)}>
                 Open
-              </Button>
+              </Button> */}
               <Button
                 size="sm"
                 variant="secondary"

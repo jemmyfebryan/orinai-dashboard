@@ -29,7 +29,7 @@ export type ToolMap = Record<string, { name: string } & Record<string, any>>;
 
 export type FlowNodeData =
   | { type: "start" }
-  | { type: "class"; name: string; description: string }
+  | { type: "class"; name: string; description: string; instructions: string }
   | { type: "tools"; toolKey: string };
 
 export interface FlowCanvasProps {
@@ -99,7 +99,7 @@ export function FlowCanvas({
   initialQuestionClass,
   onBuildQuestionClass,
 }: FlowCanvasProps) {
-  const [nodes, setNodes, onNodesChange] = useNodesState<FlowNodeData>([]);
+  const [nodes, setNodes, onNodesChange] = useNodesState<Node<FlowNodeData>>([]);
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -146,7 +146,7 @@ export function FlowCanvas({
         id,
         type: "classNode",
         position: { x: depth * 300, y: nextY(depth) },
-        data: { type: "class", name, description: obj.description || "" },
+        data: { type: "class", name, description: obj.description || "", instructions: obj.instructions || "" },
       });
       newEdges.push({ id: genId(), source: parentId, target: id });
       if (obj.tools) {
@@ -186,21 +186,25 @@ export function FlowCanvas({
       const tgt = nodes.find((n) => n.id === connection.target);
       if (!src || !tgt) return false;
       if (src.id === tgt.id) return false;
-      const srcType = src.type;
-      const tgtType = tgt.type;
-      if (srcType === "startNode" && tgtType !== "classNode") return false;
-      if (
-        srcType === "classNode" &&
-        !(tgtType === "classNode" || tgtType === "toolNode")
-      )
+      
+      // Use type-safe checks for node data
+      const isStartNode = (n: Node<FlowNodeData>): n is Node<{type: "start"}> =>
+        n.data.type === "start";
+      const isClassNode = (n: Node<FlowNodeData>): n is Node<{type: "class", name: string, description: string, instructions: string}> =>
+        n.data.type === "class";
+      const isToolNode = (n: Node<FlowNodeData>): n is Node<{type: "tools", toolKey: string}> =>
+        n.data.type === "tools";
+
+      if (isStartNode(src) && !isClassNode(tgt)) return false;
+      if (isClassNode(src) && !(isClassNode(tgt) || isToolNode(tgt)))
         return false;
-      if (srcType === "toolNode") return false;
+      if (isToolNode(src)) return false;
+      
       // Prevent multiple tool connections from one class
-      if (srcType === "classNode" && tgtType === "toolNode") {
+      if (isClassNode(src) && isToolNode(tgt)) {
         const already = edges.some(
-          (e) =>
-            e.source === src.id &&
-            nodes.find((n) => n.id === e.target)?.type === "toolNode",
+          (e) => e.source === src.id &&
+            nodes.some(n => n.id === e.target && isToolNode(n))
         );
         if (already) return false;
       }
@@ -221,7 +225,7 @@ export function FlowCanvas({
     [tools],
   );
 
-  const updateSelected = (updater: (data: any) => any) => {
+  const updateSelected = (updater: (data: FlowNodeData) => FlowNodeData) => {
     if (!selectedNode) return;
     setNodes((nds) =>
       nds.map((n) =>
@@ -238,7 +242,7 @@ export function FlowCanvas({
         id,
         type: "classNode",
         position: { x: 300, y: (nds.length + 1) * 40 },
-        data: { type: "class", name: "New Class", description: "" },
+        data: { type: "class", name: "New Class", description: "", instructions: "" },
       },
     ]);
     setSelectedId(id);
@@ -292,25 +296,38 @@ export function FlowCanvas({
       return s;
     };
 
+    // Type-safe node checks
+    const isClassNode = (n: Node<FlowNodeData>): n is Node<{type: "class", name: string, description: string, instructions: string}> =>
+      n.data.type === "class";
+    const isToolNode = (n: Node<FlowNodeData>): n is Node<{type: "tools", toolKey: string}> =>
+      n.data.type === "tools";
+
     const buildFromClass = (nodeId: string): any => {
       const node = idToNode.get(nodeId)!;
-      const data = node.data as Extract<FlowNodeData, { type: "class" }>;
-      const obj: any = { name: data.name, description: data.description };
+      if (!isClassNode(node)) return {};
+      
+      const data = node.data;
+      const obj: any = { name: data.name, description: data.description, instructions: data.instructions };
       const children = adj.get(nodeId) || [];
       const childNodes = children
         .map((id) => idToNode.get(id)!)
         .filter(Boolean);
-      const toolChild = childNodes.find((n) => n.type === "toolNode");
-      if (toolChild) obj.tools = (toolChild.data as any).toolKey;
-      const classChildren = childNodes.filter((n) => n.type === "classNode");
+      
+      const toolChild = childNodes.find(isToolNode);
+      if (toolChild && isToolNode(toolChild)) {
+        obj.tools = toolChild.data.toolKey;
+      }
+      
+      const classChildren = childNodes.filter(isClassNode);
       if (classChildren.length > 0) {
         obj.subclass = {} as Record<string, any>;
         classChildren.forEach((cn) => {
           const child = buildFromClass(cn.id);
-          const slug = uniqueSlug((cn.data as any).name);
+          const slug = uniqueSlug(isClassNode(cn) ? cn.data.name : "class");
           obj.subclass[slug] = child;
         });
       }
+      
       if (!toolChild && classChildren.length === 0) {
         obj.tools = "no_tool";
       }
@@ -321,9 +338,9 @@ export function FlowCanvas({
     const qc: Record<string, any> = {};
     roots
       .map((id) => idToNode.get(id)!)
-      .filter((n) => n?.type === "classNode")
+      .filter(isClassNode)
       .forEach((n) => {
-        const slug = uniqueSlug((n.data as any).name);
+        const slug = uniqueSlug(isClassNode(n) ? n.data.name : "class");
         qc[slug] = buildFromClass(n.id);
       });
 
@@ -337,7 +354,7 @@ export function FlowCanvas({
   }, [nodes, edges]);
 
   return (
-    <div className="grid gap-4 lg:grid-cols-[1fr_320px]">
+    <div className="grid"> {/* gap-4 lg:grid-cols-[1fr_320px] */}
       <div className="rounded-xl border bg-white p-2">
         <div className="mb-2 flex items-center gap-2">
           <Button size="sm" onClick={addClass}>
@@ -352,7 +369,7 @@ export function FlowCanvas({
         </div>
         <div className="h-[75vh] rounded-lg border">
           <ReactFlow
-            nodes={nodes}
+            nodes={nodes as Node[]}
             edges={edges}
             onNodesChange={onNodesChange}
             onEdgesChange={onEdgesChange}
@@ -372,7 +389,7 @@ export function FlowCanvas({
         </div>
       </div>
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-        {selectedNode && selectedNode.type === "classNode" && (
+        {selectedNode && selectedNode.data.type === "class" && (
           <DialogContent>
             <h3 className="text-sm font-semibold mb-2">Edit Class</h3>
             <div className="space-y-3">
@@ -381,24 +398,55 @@ export function FlowCanvas({
                   Class Name
                 </label>
                 <Input
-                  value={(selectedNode.data as any).name}
-                  onChange={(e) =>
-                    updateSelected((d) => ({ ...d, name: e.target.value }))
-                  }
+                  value={selectedNode.data.type === "class" ? selectedNode.data.name : ""}
+                  onChange={(e) => {
+                    if (selectedNode.data.type === "class") {
+                      updateSelected((d) => {
+                        if (d.type === "class") {
+                          return { ...d, name: e.target.value };
+                        }
+                        return d;
+                      });
+                    }
+                  }}
                 />
               </div>
               <div>
                 <label className="mb-1 block text-xs font-medium">
                   Description
                 </label>
-                <Input
-                  value={(selectedNode.data as any).description}
-                  onChange={(e) =>
-                    updateSelected((d) => ({
-                      ...d,
-                      description: e.target.value,
-                    }))
-                  }
+                <textarea
+                  className="h-32 w-full rounded-md border p-2 text-sm"
+                  value={selectedNode.data.type === "class" ? selectedNode.data.description : ""}
+                  onChange={(e) => {
+                    if (selectedNode.data.type === "class") {
+                      updateSelected((d) => {
+                        if (d.type === "class") {
+                          return { ...d, description: e.target.value };
+                        }
+                        return d;
+                      });
+                    }
+                  }}
+                />
+              </div>
+              <div>
+                <label className="mb-1 block text-xs font-medium">
+                  Instructions
+                </label>
+                <textarea
+                  className="h-32 w-full rounded-md border p-2 text-sm"
+                  value={selectedNode.data.type === "class" ? selectedNode.data.instructions : ""}
+                  onChange={(e) => {
+                    if (selectedNode.data.type === "class") {
+                      updateSelected((d) => {
+                        if (d.type === "class") {
+                          return { ...d, instructions: e.target.value };
+                        }
+                        return d;
+                      });
+                    }
+                  }}
                 />
               </div>
               <div className="pt-2 flex justify-between">
@@ -419,17 +467,24 @@ export function FlowCanvas({
             </div>
           </DialogContent>
         )}
-        {selectedNode && selectedNode.type === "toolNode" && (
+        {selectedNode && selectedNode.data.type === "tools" && (
           <DialogContent>
             <h3 className="text-sm font-semibold mb-2">Edit Tool</h3>
             <div className="space-y-3">
               <div>
                 <label className="mb-1 block text-xs font-medium">Tool</label>
                 <Select
-                  value={(selectedNode.data as any).toolKey}
-                  onValueChange={(v) =>
-                    updateSelected((d) => ({ ...d, toolKey: v }))
-                  }
+                  value={selectedNode.data.type === "tools" ? selectedNode.data.toolKey : ""}
+                  onValueChange={(v) => {
+                    if (selectedNode.data.type === "tools") {
+                      updateSelected((d) => {
+                        if (d.type === "tools") {
+                          return { ...d, toolKey: v };
+                        }
+                        return d;
+                      });
+                    }
+                  }}
                 >
                   <SelectTrigger>
                     <SelectValue placeholder="Select tool" />

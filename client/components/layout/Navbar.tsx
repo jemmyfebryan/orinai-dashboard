@@ -5,8 +5,8 @@ const links = [
   { to: "/", label: "Agents" },
   { to: "/assign", label: "Assign to WhatsApp" },
   { to: "/chat", label: "WhatsApp Chat" },
-  { to: "/how-it-works", label: "How it Works" },
-  { to: "/about", label: "About" },
+  // { to: "/how-it-works", label: "How it Works" },
+  // { to: "/about", label: "About" },
 ];
 
 export default function Navbar() {

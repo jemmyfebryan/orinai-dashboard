@@ -138,7 +138,7 @@ export function createServer() {
                     instructions: "",
                   },
                   moving: {
-                    name: "Idle",
+                    name: "Moving",
                     description:
                       "Gunakan subclass ini saat user bertanya tentang waktu operasional mengenai moving atau perjalanan kendaraan.",
                     tools: "or_moving",
@@ -206,56 +206,56 @@ export function createServer() {
   }
 
   // Agents
-  app.get("/agents", requireAuth, (_req, res) => {
-    res.json(agents.map(({ id, agent_name }) => ({ id, agent_name })));
-  });
+  // app.get("/agents", requireAuth, (_req, res) => {
+  //   res.json(agents.map(({ id, agent_name }) => ({ id, agent_name })));
+  // });
 
-  app.get("/agents/:id", requireAuth, (req, res) => {
-    const id = Number(req.params.id);
-    const a = agents.find((x) => x.id === id);
-    if (!a) return res.status(404).json({ error: "not found" });
-    res.json(a);
-  });
+  // app.get("/agents/:id", requireAuth, (req, res) => {
+  //   const id = Number(req.params.id);
+  //   const a = agents.find((x) => x.id === id);
+  //   if (!a) return res.status(404).json({ error: "not found" });
+  //   res.json(a);
+  // });
 
-  app.post("/agents", requireAuth, (req, res) => {
-    const b = req.body || {};
-    const a: Agent = {
-      id: nextId++,
-      agent_name: b.agent_name,
-      question_class: b.question_class || {},
-      question_class_system_prompt: b.question_class_system_prompt || "",
-      final_response_system_prompt: b.final_response_system_prompt || "",
-      suggested_questions_system_prompt:
-        b.suggested_questions_system_prompt || "",
-    };
-    agents.push(a);
-    res.status(201).json(a);
-  });
+  // app.post("/agents", requireAuth, (req, res) => {
+  //   const b = req.body || {};
+  //   const a: Agent = {
+  //     id: nextId++,
+  //     agent_name: b.agent_name,
+  //     question_class: b.question_class || {},
+  //     question_class_system_prompt: b.question_class_system_prompt || "",
+  //     final_response_system_prompt: b.final_response_system_prompt || "",
+  //     suggested_questions_system_prompt:
+  //       b.suggested_questions_system_prompt || "",
+  //   };
+  //   agents.push(a);
+  //   res.status(201).json(a);
+  // });
 
-  app.put("/agents/:id", requireAuth, (req, res) => {
-    const id = Number(req.params.id);
-    const idx = agents.findIndex((x) => x.id === id);
-    if (idx === -1) return res.status(404).json({ error: "not found" });
-    const b = req.body || {};
-    agents[idx] = { ...agents[idx], ...b, id };
-    res.json(agents[idx]);
-  });
+  // app.put("/agents/:id", requireAuth, (req, res) => {
+  //   const id = Number(req.params.id);
+  //   const idx = agents.findIndex((x) => x.id === id);
+  //   if (idx === -1) return res.status(404).json({ error: "not found" });
+  //   const b = req.body || {};
+  //   agents[idx] = { ...agents[idx], ...b, id };
+  //   res.json(agents[idx]);
+  // });
 
-  app.delete("/agents/:id", requireAuth, (req, res) => {
-    const id = Number(req.params.id);
-    agents = agents.filter((x) => x.id !== id);
-    res.json({ ok: true });
-  });
+  // app.delete("/agents/:id", requireAuth, (req, res) => {
+  //   const id = Number(req.params.id);
+  //   agents = agents.filter((x) => x.id !== id);
+  //   res.json({ ok: true });
+  // });
 
-  // Tools
-  app.get("/tools", requireAuth, (_req, res) => res.json(tools));
+  // // Tools
+  // app.get("/tools", requireAuth, (_req, res) => res.json(tools));
 
   // Example API routes
   app.get("/api/ping", (_req, res) => {
     const ping = process.env.PING_MESSAGE ?? "ping";
     res.json({ message: ping });
   });
-
+  
   app.get("/api/demo", handleDemo);
 
   return app;

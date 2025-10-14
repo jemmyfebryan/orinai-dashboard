@@ -60,10 +60,13 @@ export default function AgentEditor() {
 
     if (isNew) {
       const created = await createAgent(payload);
-      navigate(`/agents/${created.id}`);
+      // navigate(`/agents/${created.id}`);
+      alert("Agent has been created!");
+      navigate(`/`);
     } else {
       await updateAgent(Number(id), payload);
-      alert("Agent updated");
+      alert("Agent has been updated");
+      navigate(`/`);
     }
   };
 
@@ -113,7 +116,7 @@ export default function AgentEditor() {
             {isNew ? "Create Agent" : `Edit Agent #${id}`}
           </h1>
           <p className="text-sm text-muted-foreground">
-            Build n8n-like flows: Start → Class → (Class|Tool). Every branch
+            Build AI Agents flows: Start → Class → (Class|Tool). Every branch
             must end with a tool; missing tools default to "No Tool".
           </p>
         </div>

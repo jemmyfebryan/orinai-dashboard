@@ -13,13 +13,13 @@ export default function Login() {
     e.preventDefault();
     setError(null);
     try {
-      const res = await fetch("/login", {
+      await fetch("/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ username, password }),
+        credentials: "include",
       });
-      if (!res.ok) throw new Error("Invalid credentials");
-      localStorage.setItem("orin_auth", "1");
+      // No need to store anything in localStorage - session is cookie-based
       navigate("/");
     } catch (err) {
       setError("Invalid username or password");
