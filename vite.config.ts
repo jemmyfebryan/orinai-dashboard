@@ -14,35 +14,40 @@ export default defineConfig(({ mode }) => ({
     },
     proxy: {
       // ORINAI CHAT PORT 8080
+      '/notification_setting': {
+        target: 'https://orinai-dashboard-proxy-1056582462205.asia-southeast1.run.app/ai_chat',
+        changeOrigin: true,
+        secure: false,
+      },
       '/agents': {
-        target: 'http://localhost:8080/ai_chat',
+        target: 'https://orinai-dashboard-proxy-1056582462205.asia-southeast1.run.app/ai_chat',
         changeOrigin: true,
         secure: false,
       },
       '/whatsapp/number': {
-        target: 'http://localhost:8080/ai_chat',
+        target: 'https://orinai-dashboard-proxy-1056582462205.asia-southeast1.run.app/ai_chat',
         changeOrigin: true,
         secure: false,
       },
       '/tools': {
-        target: 'http://localhost:8080/ai_chat',
+        target: 'https://orinai-dashboard-proxy-1056582462205.asia-southeast1.run.app/ai_chat',
         changeOrigin: true,
         secure: false,
       },
 
       // WA REPORT PORT 8000
       '/whatsapp/contacts': {
-        target: 'http://localhost:8080/wa_report',
+        target: 'https://orinai-dashboard-proxy-1056582462205.asia-southeast1.run.app/wa_report',
         changeOrigin: true,
         secure: false,
       },
       '/whatsapp/chat_history': {
-        target: 'http://localhost:8080/wa_report',
+        target: 'https://orinai-dashboard-proxy-1056582462205.asia-southeast1.run.app/wa_report',
         changeOrigin: true,
         secure: false,
       },
       '/whatsapp/profile': {
-        target: 'http://localhost:8080/wa_report',
+        target: 'https://orinai-dashboard-proxy-1056582462205.asia-southeast1.run.app/wa_report',
         changeOrigin: true,
         secure: false,
       },

@@ -5,7 +5,7 @@ const links = [
   { to: "/", label: "Agents" },
   { to: "/assign", label: "Assign to WhatsApp" },
   { to: "/chat", label: "WhatsApp Chat" },
-  // { to: "/how-it-works", label: "How it Works" },
+  { to: "/notification_setting", label: "Notification Setting" },
   // { to: "/about", label: "About" },
 ];
 

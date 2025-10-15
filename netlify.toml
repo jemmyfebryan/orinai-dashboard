@@ -21,6 +21,12 @@
 #   force = true
 
 [[redirects]]
+  from = "/notification_setting/*"
+  to = "https://orinai-dashboard-proxy-1056582462205.asia-southeast1.run.app/ai_chat/notification_setting/:splat"
+  status = 200
+  force = true
+
+[[redirects]]
   from = "/agents/*"
   to = "https://orinai-dashboard-proxy-1056582462205.asia-southeast1.run.app/ai_chat/agents/:splat"
   status = 200

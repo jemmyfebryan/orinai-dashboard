@@ -12,6 +12,7 @@ import Login from "./pages/Login";
 import AgentEditor from "./pages/AgentEditor";
 import AgentAssignment from "./pages/AgentAssignment";
 import ChatPage from "./pages/ChatPage";
+import NotificationSetting from "./pages/NotificationSetting";
 import Layout from "./components/layout/Layout";
 
 const queryClient = new QueryClient();
@@ -81,6 +82,16 @@ const App = () => (
               <Protected>
                 <Layout>
                   <ChatPage />
+                </Layout>
+              </Protected>
+            }
+          />
+          <Route
+            path="/notification_setting"
+            element={
+              <Protected>
+                <Layout>
+                  <NotificationSetting />
                 </Layout>
               </Protected>
             }
