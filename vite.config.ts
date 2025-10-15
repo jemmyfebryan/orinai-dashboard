@@ -15,34 +15,34 @@ export default defineConfig(({ mode }) => ({
     proxy: {
       // ORINAI CHAT PORT 8080
       '/agents': {
-        target: 'http://216.244.94.213:8080',
+        target: 'http://localhost:8080/ai_chat',
         changeOrigin: true,
         secure: false,
       },
       '/whatsapp/number': {
-        target: 'http://216.244.94.213:8080',
+        target: 'http://localhost:8080/ai_chat',
         changeOrigin: true,
         secure: false,
       },
       '/tools': {
-        target: 'http://216.244.94.213:8080',
+        target: 'http://localhost:8080/ai_chat',
         changeOrigin: true,
         secure: false,
       },
 
       // WA REPORT PORT 8000
       '/whatsapp/contacts': {
-        target: 'http://216.244.94.213:8000',
+        target: 'http://localhost:8080/wa_report',
         changeOrigin: true,
         secure: false,
       },
       '/whatsapp/chat_history': {
-        target: 'http://216.244.94.213:8000',
+        target: 'http://localhost:8080/wa_report',
         changeOrigin: true,
         secure: false,
       },
       '/whatsapp/profile': {
-        target: 'http://216.244.94.213:8000',
+        target: 'http://localhost:8080/wa_report',
         changeOrigin: true,
         secure: false,
       },

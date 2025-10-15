@@ -22,36 +22,36 @@
 
 [[redirects]]
   from = "/agents/*"
-  to = "http://216.244.94.213:8080/agents/:splat"
+  to = "https://orinai-dashboard-proxy-1056582462205.asia-southeast1.run.app/ai_chat/agents/:splat"
   status = 200
   force = true
 
 [[redirects]]
   from = "/whatsapp/number/*"
-  to = "http://216.244.94.213:8080/whatsapp/number/:splat"
+  to = "https://orinai-dashboard-proxy-1056582462205.asia-southeast1.run.app/ai_chat/whatsapp/number/:splat"
   status = 200
   force = true
 
 [[redirects]]
   from = "/tools/*"
-  to = "http://216.244.94.213:8080/tools/:splat"
+  to = "https://orinai-dashboard-proxy-1056582462205.asia-southeast1.run.app/ai_chat/tools/:splat"
   status = 200
   force = true
 
 [[redirects]]
   from = "/whatsapp/contacts/*"
-  to = "http://216.244.94.213:8000/whatsapp/contacts/:splat"
+  to = "https://orinai-dashboard-proxy-1056582462205.asia-southeast1.run.app/wa_report/whatsapp/contacts/:splat"
   status = 200
   force = true
 
 [[redirects]]
   from = "/whatsapp/chat_history/*"
-  to = "http://216.244.94.213:8000/whatsapp/chat_history/:splat"
+  to = "https://orinai-dashboard-proxy-1056582462205.asia-southeast1.run.app/wa_report/whatsapp/chat_history/:splat"
   status = 200
   force = true
 
 [[redirects]]
   from = "/whatsapp/profile/*"
-  to = "http://216.244.94.213:8000/whatsapp/profile/:splat"
+  to = "https://orinai-dashboard-proxy-1056582462205.asia-southeast1.run.app/wa_report/whatsapp/profile/:splat"
   status = 200
   force = true
