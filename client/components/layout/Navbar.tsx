@@ -18,7 +18,12 @@ export default function Navbar() {
       <div className="container mx-auto flex h-14 items-center justify-between">
         <div className="flex items-center gap-6">
           <Link to="/" className="flex items-center gap-2">
-            <div className="h-7 w-7 rounded bg-primary shadow ring-1 ring-primary/30" />
+            {/* <div className="h-7 w-7 rounded bg-primary shadow ring-1 ring-primary/30" /> */}
+            <img
+              src="/favicon.ico"
+              alt="ORIN logo"
+              className="h-7 w-7 rounded shadow ring-1 ring-primary/30"
+            />
             <span className="font-extrabold tracking-tight">
               ORIN AI Chat Dashboard
             </span>

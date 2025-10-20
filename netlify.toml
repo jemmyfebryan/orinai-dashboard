@@ -61,3 +61,9 @@
   to = "https://orinai-dashboard-proxy-1056582462205.asia-southeast1.run.app/wa_report/whatsapp/profile/:splat"
   status = 200
   force = true
+
+[[redirects]]
+  from = "/whatsapp/dummy_notification/*"
+  to = "https://orinai-dashboard-proxy-1056582462205.asia-southeast1.run.app/wa_report/whatsapp/dummy_notification/:splat"
+  status = 200
+  force = true

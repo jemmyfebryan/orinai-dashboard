@@ -60,3 +60,18 @@ export const deletePromptSetting = async (setting: string): Promise<void> => {
     throw error;
   }
 };
+
+// Send dummy notification
+export const sendDummyNotification = async (data: { to: string; alert_type: string }): Promise<void> => {
+  try {
+    const response = await fetch('/whatsapp/dummy_notification', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data),
+    });
+    if (!response.ok) throw new Error('Failed to send dummy notification');
+  } catch (error) {
+    toast({ title: 'Error sending dummy notification', description: error.message, variant: 'destructive' });
+    throw error;
+  }
+};

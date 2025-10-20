@@ -13,44 +13,90 @@ export default defineConfig(({ mode }) => ({
       deny: [".env", ".env.*", "*.{crt,pem}", "**/.git/**", "server/**"],
     },
     proxy: {
+      // DEVELOPMENT
       // ORINAI CHAT PORT 8080
       '/notification_setting': {
-        target: 'https://orinai-dashboard-proxy-1056582462205.asia-southeast1.run.app/ai_chat',
+        target: 'http://localhost:8080',
         changeOrigin: true,
         secure: false,
       },
       '/agents': {
-        target: 'https://orinai-dashboard-proxy-1056582462205.asia-southeast1.run.app/ai_chat',
+        target: 'http://localhost:8080',
         changeOrigin: true,
         secure: false,
       },
       '/whatsapp/number': {
-        target: 'https://orinai-dashboard-proxy-1056582462205.asia-southeast1.run.app/ai_chat',
+        target: 'http://localhost:8080',
         changeOrigin: true,
         secure: false,
       },
       '/tools': {
-        target: 'https://orinai-dashboard-proxy-1056582462205.asia-southeast1.run.app/ai_chat',
+        target: 'http://localhost:8080',
         changeOrigin: true,
         secure: false,
       },
 
       // WA REPORT PORT 8000
       '/whatsapp/contacts': {
-        target: 'https://orinai-dashboard-proxy-1056582462205.asia-southeast1.run.app/wa_report',
+        target: 'http://localhost:8000',
         changeOrigin: true,
         secure: false,
       },
       '/whatsapp/chat_history': {
-        target: 'https://orinai-dashboard-proxy-1056582462205.asia-southeast1.run.app/wa_report',
+        target: 'http://localhost:8000',
         changeOrigin: true,
         secure: false,
       },
       '/whatsapp/profile': {
-        target: 'https://orinai-dashboard-proxy-1056582462205.asia-southeast1.run.app/wa_report',
+        target: 'http://localhost:8000',
         changeOrigin: true,
         secure: false,
       },
+      '/whatsapp/dummy_notification': {
+        target: 'http://localhost:8000',
+        changeOrigin: true,
+        secure: false,
+      },
+
+      // PRODUCTION
+      // ORINAI CHAT PORT 8080
+      // '/notification_setting': {
+      //   target: 'https://orinai-dashboard-proxy-1056582462205.asia-southeast1.run.app/ai_chat',
+      //   changeOrigin: true,
+      //   secure: false,
+      // },
+      // '/agents': {
+      //   target: 'https://orinai-dashboard-proxy-1056582462205.asia-southeast1.run.app/ai_chat',
+      //   changeOrigin: true,
+      //   secure: false,
+      // },
+      // '/whatsapp/number': {
+      //   target: 'https://orinai-dashboard-proxy-1056582462205.asia-southeast1.run.app/ai_chat',
+      //   changeOrigin: true,
+      //   secure: false,
+      // },
+      // '/tools': {
+      //   target: 'https://orinai-dashboard-proxy-1056582462205.asia-southeast1.run.app/ai_chat',
+      //   changeOrigin: true,
+      //   secure: false,
+      // },
+
+      // WA REPORT PORT 8000
+      // '/whatsapp/contacts': {
+      //   target: 'https://orinai-dashboard-proxy-1056582462205.asia-southeast1.run.app/wa_report',
+      //   changeOrigin: true,
+      //   secure: false,
+      // },
+      // '/whatsapp/chat_history': {
+      //   target: 'https://orinai-dashboard-proxy-1056582462205.asia-southeast1.run.app/wa_report',
+      //   changeOrigin: true,
+      //   secure: false,
+      // },
+      // '/whatsapp/profile': {
+      //   target: 'https://orinai-dashboard-proxy-1056582462205.asia-southeast1.run.app/wa_report',
+      //   changeOrigin: true,
+      //   secure: false,
+      // },
     },
   },
   build: {
