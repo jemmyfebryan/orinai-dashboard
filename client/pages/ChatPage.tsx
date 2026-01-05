@@ -7,7 +7,10 @@ import { useToast } from '@/components/ui/use-toast';
 import { 
   getWhatsappContacts, 
   getWhatsappChatHistory, 
-  getWhatsappProfile 
+  getWhatsappProfile,
+  sendWhatsappMessage,
+  getBotDisableStatus,
+  updateBotDisableStatus
 } from '@/services/api';
 
 interface Contact {
@@ -34,6 +37,9 @@ const ChatPage = () => {
   const [loadingContacts, setLoadingContacts] = useState(true);
   const [loadingChat, setLoadingChat] = useState(false);
   const [loadingProfile, setLoadingProfile] = useState(false);
+  const [messageInput, setMessageInput] = useState('');
+  const [botDisabled, setBotDisabled] = useState(false);
+  const [loadingBotStatus, setLoadingBotStatus] = useState(false);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -86,9 +92,81 @@ const ChatPage = () => {
     fetchChatData();
   }, [selectedContact]);
 
+  useEffect(() => {
+    if (!selectedContact) return;
+    
+    const fetchBotStatus = async () => {
+      try {
+        setLoadingBotStatus(true);
+        const status = await getBotDisableStatus(selectedContact);
+        setBotDisabled(status.disable_agent);
+      } catch (error) {
+        toast({
+          title: 'Error loading bot status',
+          description: (error as Error).message,
+          variant: 'destructive'
+        });
+      } finally {
+        setLoadingBotStatus(false);
+      }
+    };
+    
+    fetchBotStatus();
+  }, [selectedContact]);
+
   const formatTimestamp = (timestamp?: number) => {
     if (!timestamp) return '';
     return format(new Date(timestamp * 1000), 'HH:mm, dd MMM yyyy', { locale: id });
+  };
+
+  const handleToggleBot = async () => {
+    if (!selectedContact) return;
+    
+    try {
+      setLoadingBotStatus(true);
+      const newStatus = !botDisabled;
+      await updateBotDisableStatus(selectedContact, newStatus);
+      setBotDisabled(newStatus);
+      toast({
+        title: newStatus ? 'Bot disabled' : 'Bot enabled',
+        description: `The bot has been ${newStatus ? 'deactivated' : 'activated'} for this contact`
+      });
+    } catch (error) {
+      toast({
+        title: 'Error updating bot status',
+        description: (error as Error).message,
+        variant: 'destructive'
+      });
+    } finally {
+      setLoadingBotStatus(false);
+    }
+  };
+
+  const handleSendMessage = async () => {
+    if (!selectedContact || !messageInput.trim()) return;
+    
+    try {
+      await sendWhatsappMessage(selectedContact, messageInput);
+      
+      // Optimistically update chat history
+      const newMessage: Message = {
+        role: 'user',
+        content: messageInput,
+        timestamp: Math.floor(Date.now() / 1000)
+      };
+      setChatHistory(prev => [...prev, newMessage]);
+      setMessageInput('');
+      
+      // Fetch latest chat history to ensure consistency
+      const history = await getWhatsappChatHistory(selectedContact);
+      setChatHistory(history);
+    } catch (error) {
+      toast({
+        title: 'Error sending message',
+        description: (error as Error).message,
+        variant: 'destructive'
+      });
+    }
   };
 
   return (
@@ -135,42 +213,56 @@ const ChatPage = () => {
       </div>
 
       {/* Chat Area */}
-      <div className="w-2/3 flex flex-col">
+      <div className="w-2/3 flex flex-col h-full">
         {selectedContact ? (
           <>
             {/* Profile Header */}
-            <div className="p-4 border-b flex items-center">
-              {loadingProfile ? (
-                <div className="flex items-center space-x-3">
-                  <Skeleton className="h-10 w-10 rounded-full" />
-                  <div>
-                    <Skeleton className="h-4 w-32 mb-2" />
-                    <Skeleton className="h-3 w-48" />
+            <div className="p-4 border-b flex items-center justify-between">
+              <div className="flex items-center">
+                {loadingProfile ? (
+                  <div className="flex items-center space-x-3">
+                    <Skeleton className="h-10 w-10 rounded-full" />
+                    <div>
+                      <Skeleton className="h-4 w-32 mb-2" />
+                      <Skeleton className="h-3 w-48" />
+                    </div>
                   </div>
-                </div>
-              ) : profile ? (
-                <div className="flex items-center space-x-3">
-                  <Avatar>
-                    {profile.profile_image ? (
-                      <AvatarImage src={`${profile.profile_image}`} />
-                    ) : (
-                      <AvatarFallback>
-                        {profile.contact_name.charAt(0)}
-                      </AvatarFallback>
-                    )}
-                  </Avatar>
-                  <div>
-                    <div className="font-bold">{profile.contact_name}</div>
-                    <div className="text-sm text-gray-500">{profile.description}</div>
+                ) : profile ? (
+                  <div className="flex items-center space-x-3">
+                    <Avatar>
+                      {profile.profile_image ? (
+                        <AvatarImage src={`${profile.profile_image}`} />
+                      ) : (
+                        <AvatarFallback>
+                          {profile.contact_name.charAt(0)}
+                        </AvatarFallback>
+                      )}
+                    </Avatar>
+                    <div>
+                      <div className="font-bold">{profile.contact_name}</div>
+                      <div className="text-sm text-gray-500">{profile.description}</div>
+                    </div>
                   </div>
-                </div>
-              ) : (
-                <div className="text-red-500">Failed to load profile</div>
-              )}
+                ) : (
+                  <div className="text-red-500">Failed to load profile</div>
+                )}
+              </div>
+              
+              <button
+                onClick={handleToggleBot}
+                disabled={loadingBotStatus}
+                className={`px-4 py-2 rounded-lg ${
+                  botDisabled 
+                    ? 'bg-green-500 hover:bg-green-600 text-white' 
+                    : 'bg-red-500 hover:bg-red-600 text-white'
+                } ${loadingBotStatus ? 'opacity-50 cursor-not-allowed' : ''}`}
+              >
+                {loadingBotStatus ? 'Loading...' : botDisabled ? 'Turn On Bot' : 'Turn Off Bot'}
+              </button>
             </div>
 
             {/* Chat History */}
-            <div className="flex-1 overflow-y-auto p-4 bg-gray-50" style={{ maxHeight: 'calc(100vh - 200px)' }}>
+            <div className="h-[calc(100vh-200px)] overflow-y-auto p-4 bg-gray-50">
               {loadingChat ? (
                 <div className="space-y-4">
                   {[...Array(5)].map((_, i) => (
@@ -235,6 +327,25 @@ const ChatPage = () => {
                   );
                 })
               )}
+            </div>
+
+            {/* Message Input */}
+            <div className="p-4 border-t flex items-center">
+              <input
+                type="text"
+                value={messageInput}
+                onChange={(e) => setMessageInput(e.target.value)}
+                placeholder="Type your message..."
+                className="flex-1 border rounded-l-lg p-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                onKeyDown={(e) => e.key === 'Enter' && handleSendMessage()}
+              />
+              <button
+                onClick={handleSendMessage}
+                disabled={!messageInput.trim()}
+                className="bg-blue-500 text-white px-6 py-3 rounded-r-lg hover:bg-blue-600 disabled:bg-gray-300 disabled:cursor-not-allowed"
+              >
+                Send
+              </button>
             </div>
           </>
         ) : (

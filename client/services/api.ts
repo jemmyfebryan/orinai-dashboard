@@ -240,3 +240,49 @@ export async function getWhatsappProfile(
     throw new Error(`Error fetching profile: ${(error as Error).message}`);
   }
 }
+
+export const sendWhatsappMessage = async (to: string, message: string): Promise<any> => {
+  to = to + "@lid"
+  const response = await fetch('/send-message', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ "to": to, "message": message }),
+  });
+  
+  if (!response.ok) {
+    throw new Error('Failed to send WhatsApp message');
+  }
+  
+  return response.json();
+};
+
+// New function to get bot disable status
+export const getBotDisableStatus = async (phoneNumber: string): Promise<{disable_agent: boolean}> => {
+  const response = await fetch(`/whatsapp/disable_agent/${phoneNumber}`, {
+    credentials: 'include'
+  });
+  if (!response.ok) {
+    throw new Error('Failed to fetch bot disable status');
+  }
+  return response.json();
+};
+
+// New function to update bot disable status
+export const updateBotDisableStatus = async (phoneNumber: string, disableAgent: boolean): Promise<any> => {
+  const response = await fetch('/whatsapp/disable_agent', {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    credentials: 'include',
+    body: JSON.stringify({ phone_number: phoneNumber, disable_agent: disableAgent }),
+  });
+  
+  if (!response.ok) {
+    throw new Error('Failed to update bot disable status');
+  }
+  
+  return response.json();
+};

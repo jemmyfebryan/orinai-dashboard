@@ -15,11 +15,6 @@ export default defineConfig(({ mode }) => ({
     proxy: {
       // DEVELOPMENT
       // ORINAI CHAT PORT 8080
-      '/notification_setting': {
-        target: 'http://localhost:8080',
-        changeOrigin: true,
-        secure: false,
-      },
       '/agents': {
         target: 'http://localhost:8080',
         changeOrigin: true,
@@ -37,6 +32,21 @@ export default defineConfig(({ mode }) => ({
       },
 
       // WA REPORT PORT 8000
+      '/notification_setting': {
+        target: 'http://localhost:8000',
+        changeOrigin: true,
+        secure: false,
+      },
+      '/send-message': {
+        target: 'http://localhost:8000',
+        changeOrigin: true,
+        secure: false,
+      },
+      '/whatsapp/disable_agent': {
+        target: 'http://localhost:8000',
+        changeOrigin: true,
+        secure: false,
+      },
       '/whatsapp/contacts': {
         target: 'http://localhost:8000',
         changeOrigin: true,
@@ -57,14 +67,14 @@ export default defineConfig(({ mode }) => ({
         changeOrigin: true,
         secure: false,
       },
+      '/whatsapp/phone_to_lid': {
+        target: 'http://localhost:8000',
+        changeOrigin: true,
+        secure: false,
+      },
 
       // PRODUCTION
       // ORINAI CHAT PORT 8080
-      // '/notification_setting': {
-      //   target: 'https://orinai-dashboard-proxy-1056582462205.asia-southeast1.run.app/ai_chat',
-      //   changeOrigin: true,
-      //   secure: false,
-      // },
       // '/agents': {
       //   target: 'https://orinai-dashboard-proxy-1056582462205.asia-southeast1.run.app/ai_chat',
       //   changeOrigin: true,
@@ -82,6 +92,11 @@ export default defineConfig(({ mode }) => ({
       // },
 
       // WA REPORT PORT 8000
+      // '/notification_setting': {
+      //   target: 'https://orinai-dashboard-proxy-1056582462205.asia-southeast1.run.app/wa_report',
+      //   changeOrigin: true,
+      //   secure: false,
+      // },
       // '/whatsapp/contacts': {
       //   target: 'https://orinai-dashboard-proxy-1056582462205.asia-southeast1.run.app/wa_report',
       //   changeOrigin: true,

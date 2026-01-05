@@ -21,12 +21,6 @@
 #   force = true
 
 [[redirects]]
-  from = "/notification_setting/*"
-  to = "https://orinai-dashboard-proxy-1056582462205.asia-southeast1.run.app/ai_chat/notification_setting/:splat"
-  status = 200
-  force = true
-
-[[redirects]]
   from = "/agents/*"
   to = "https://orinai-dashboard-proxy-1056582462205.asia-southeast1.run.app/ai_chat/agents/:splat"
   status = 200
@@ -41,6 +35,18 @@
 [[redirects]]
   from = "/tools/*"
   to = "https://orinai-dashboard-proxy-1056582462205.asia-southeast1.run.app/ai_chat/tools/:splat"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/notification_setting/*"
+  to = "https://orinai-dashboard-proxy-1056582462205.asia-southeast1.run.app/wa_report/notification_setting/:splat"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/send-message/*"
+  to = "https://orinai-dashboard-proxy-1056582462205.asia-southeast1.run.app/wa_report/send-message/:splat"
   status = 200
   force = true
 
@@ -65,5 +71,11 @@
 [[redirects]]
   from = "/whatsapp/dummy_notification/*"
   to = "https://orinai-dashboard-proxy-1056582462205.asia-southeast1.run.app/wa_report/whatsapp/dummy_notification/:splat"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/whatsapp/phone_to_lid/*"
+  to = "https://orinai-dashboard-proxy-1056582462205.asia-southeast1.run.app/wa_report/whatsapp/phone_to_lid/:splat"
   status = 200
   force = true
