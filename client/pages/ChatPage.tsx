@@ -124,6 +124,66 @@ const ChatPage = () => {
     return format(new Date(timestamp * 1000), 'HH:mm', { locale: id });
   };
 
+  // Check if content is a base64 encoded image
+  const isBase64Image = (content: string): boolean => {
+    // Check if content looks like base64 image data
+    // Common image magic numbers in base64:
+    // /9j/ = JPEG
+    // iVBORw0KGgo = PNG
+    // R0lGODlh = GIF
+    // Qk0 = BMP
+    // UklGR = WebP
+    const trimmedContent = content.trim();
+    if (!trimmedContent || trimmedContent.length < 10) return false;
+
+    // Check for common image magic numbers
+    const imageMagicNumbers = ['/9j/', 'iVBORw0KGgo', 'R0lGODlh', 'Qk0', 'UklGR'];
+    return imageMagicNumbers.some(magic => trimmedContent.startsWith(magic));
+  };
+
+  // Get image MIME type from base64 content
+  const getImageMimeType = (content: string): string => {
+    const trimmedContent = content.trim();
+    if (trimmedContent.startsWith('/9j/')) return 'image/jpeg';
+    if (trimmedContent.startsWith('iVBORw0KGgo')) return 'image/png';
+    if (trimmedContent.startsWith('R0lGODlh')) return 'image/gif';
+    if (trimmedContent.startsWith('Qk0')) return 'image/bmp';
+    if (trimmedContent.startsWith('UklGR')) return 'image/webp';
+    return 'image/jpeg'; // default to jpeg
+  };
+
+  const renderMessageContent = (item: Message) => {
+    if (isBase64Image(item.content)) {
+      // It's a base64 image, render as img tag
+      const mimeType = getImageMimeType(item.content);
+      return (
+        <img
+          src={`data:${mimeType};base64,${item.content}`}
+          alt="Shared image"
+          className="max-w-full h-auto rounded-lg"
+          loading="lazy"
+        />
+      );
+    }
+
+    // It's text, render with markdown-like formatting
+    return (
+      <div
+        className="text-sm leading-relaxed whitespace-pre-wrap"
+        dangerouslySetInnerHTML={{
+          __html: item.content
+            .replace(/&/g, '&')
+            .replace(/</g, '<')
+            .replace(/>/g, '>')
+            .replace(/\*([^*]+)\*/g, '<strong>$1</strong>')
+            .replace(/_([^_]+)_/g, '<em>$1</em>')
+            .replace(/`([^`]+)`/g, '<code class="bg-black/20 px-1 rounded">$1</code>')
+            .replace(/\n/g, '<br />')
+        }}
+      />
+    );
+  };
+
   const handleContactSelect = (phoneNumber: string) => {
     setSelectedContact(phoneNumber);
     setShowContactList(false);
@@ -377,19 +437,7 @@ const ChatPage = () => {
                               : 'bg-blue-500 text-white rounded-tr-none'
                           }`}
                         >
-                          <div
-                            className="text-sm leading-relaxed whitespace-pre-wrap"
-                            dangerouslySetInnerHTML={{
-                              __html: item.content
-                                .replace(/&/g, '&')
-                                .replace(/</g, '<')
-                                .replace(/>/g, '>')
-                                .replace(/\*([^*]+)\*/g, '<strong>$1</strong>')
-                                .replace(/_([^_]+)_/g, '<em>$1</em>')
-                                .replace(/`([^`]+)`/g, '<code class="bg-black/20 px-1 rounded">$1</code>')
-                                .replace(/\n/g, '<br />')
-                            }}
-                          />
+                          {renderMessageContent(item)}
                           <div
                             className={`text-[10px] mt-1 text-right ${
                               isUser ? 'text-gray-400' : 'text-blue-100'
