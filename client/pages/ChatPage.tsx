@@ -4,9 +4,9 @@ import { format } from 'date-fns';
 import { id } from 'date-fns/locale';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useToast } from '@/components/ui/use-toast';
-import { 
-  getWhatsappContacts, 
-  getWhatsappChatHistory, 
+import {
+  getWhatsappContacts,
+  getWhatsappChatHistory,
   getWhatsappProfile,
   sendWhatsappMessage,
   getBotDisableStatus,
@@ -42,6 +42,7 @@ const ChatPage = () => {
   const [messageInput, setMessageInput] = useState('');
   const [botDisabled, setBotDisabled] = useState(false);
   const [loadingBotStatus, setLoadingBotStatus] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
   const { toast } = useToast();
 
   useEffect(() => {
@@ -71,12 +72,12 @@ const ChatPage = () => {
       try {
         setLoadingChat(true);
         setLoadingProfile(true);
-        
+
         const [history, profileData] = await Promise.all([
           getWhatsappChatHistory(selectedContact),
           getWhatsappProfile(selectedContact)
         ]);
-        
+
         setChatHistory(history);
         setProfile(profileData);
       } catch (error) {
@@ -96,7 +97,7 @@ const ChatPage = () => {
 
   useEffect(() => {
     if (!selectedContact) return;
-    
+
     const fetchBotStatus = async () => {
       try {
         setLoadingBotStatus(true);
@@ -112,18 +113,18 @@ const ChatPage = () => {
         setLoadingBotStatus(false);
       }
     };
-    
+
     fetchBotStatus();
   }, [selectedContact]);
 
   const formatTimestamp = (timestamp?: number) => {
     if (!timestamp) return '';
-    return format(new Date(timestamp * 1000), 'HH:mm, dd MMM yyyy', { locale: id });
+    return format(new Date(timestamp * 1000), 'HH:mm', { locale: id });
   };
 
   const handleToggleBot = async () => {
     if (!selectedContact) return;
-    
+
     try {
       setLoadingBotStatus(true);
       const newStatus = !botDisabled;
@@ -146,10 +147,10 @@ const ChatPage = () => {
 
   const handleSendMessage = async () => {
     if (!selectedContact || !messageInput.trim()) return;
-    
+
     try {
       await sendWhatsappMessage(selectedContact, messageInput);
-      
+
       // Optimistically update chat history
       const newMessage: Message = {
         role: 'user',
@@ -158,7 +159,7 @@ const ChatPage = () => {
       };
       setChatHistory(prev => [...prev, newMessage]);
       setMessageInput('');
-      
+
       // Fetch latest chat history to ensure consistency
       const history = await getWhatsappChatHistory(selectedContact);
       setChatHistory(history);
@@ -172,107 +173,142 @@ const ChatPage = () => {
   };
 
   return (
-    <div className="flex h-screen">
+    <div className="flex h-screen overflow-hidden bg-white">
       {/* Contact List */}
-      <div className="w-1/3 border-r flex flex-col h-full">
-        <div className="p-4 border-b">
-          <h2 className="text-xl font-bold">Chats</h2>
+      <div className="w-[400px] min-w-0 border-r border-gray-200 flex flex-col h-full bg-white flex-shrink-0">
+        {/* Header */}
+        <div className="px-4 py-3 bg-gray-50 border-b border-gray-200">
+          <h2 className="text-lg font-semibold text-gray-800">Chats</h2>
         </div>
 
-        <div className="flex-1 overflow-y-auto">
-        
-        {loadingContacts ? (
-          <div className="p-4 space-y-3">
-            {[...Array(5)].map((_, i) => (
-              <Skeleton key={i} className="h-16 rounded-md" />
-            ))}
+        {/* Search Bar */}
+        <div className="p-3 bg-white">
+          <div className="relative">
+            <input
+              type="text"
+              placeholder="Search or start new chat"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full bg-gray-100 rounded-lg py-2 pl-4 pr-10 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition"
+            />
+            <svg className="absolute right-3 top-2.5 h-5 w-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            </svg>
           </div>
-        ) : contacts.length === 0 ? (
-          <div className="p-4 text-center text-gray-500">No contacts found</div>
-        ) : (
-          <ul>
-            {contacts.map((contact) => (
-              <li key={contact.phone_number}>
-                <button
-                  className={`w-full text-left p-4 hover:bg-gray-100 transition ${
-                    selectedContact === contact.phone_number ? 'bg-blue-50' : ''
-                  }`}
-                  onClick={() => setSelectedContact(contact.phone_number)}
-                >
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center">
-                      <Avatar className="mr-3">
-                        <AvatarFallback>
-                          {contact.user_name?.charAt(0)?.toUpperCase() || contact.phone_number.slice(-2)}
-                        </AvatarFallback>
-                      </Avatar>
-                      <div>
-                        <div className="font-medium">{contact.user_name} (+{contact.phone_number})</div>
+        </div>
+
+        {/* Contact List */}
+        <div className="flex-1 overflow-y-auto">
+          {loadingContacts ? (
+            <div className="p-4 space-y-2">
+              {[...Array(5)].map((_, i) => (
+                <Skeleton key={i} className="h-16 rounded-lg" />
+              ))}
+            </div>
+          ) : contacts.length === 0 ? (
+            <div className="p-8 text-center text-gray-500 text-sm">No contacts found</div>
+          ) : (
+            <ul className="divide-y divide-gray-100">
+              {contacts
+                .filter((contact) => {
+                  const query = searchQuery.toLowerCase();
+                  return (
+                    contact.user_name?.toLowerCase().includes(query) ||
+                    contact.phone_number.includes(query)
+                  );
+                })
+                .map((contact) => (
+                  <li key={contact.phone_number}>
+                    <button
+                      className={`w-full text-left px-4 py-3 hover:bg-gray-50 transition-colors ${
+                        selectedContact === contact.phone_number ? 'bg-blue-50' : ''
+                      }`}
+                      onClick={() => setSelectedContact(contact.phone_number)}
+                    >
+                      <div className="flex items-center gap-3">
+                        <Avatar className="h-12 w-12 flex-shrink-0">
+                          <AvatarFallback className="bg-gradient-to-br from-blue-400 to-blue-600 text-white font-medium">
+                            {contact.user_name?.charAt(0)?.toUpperCase() || contact.phone_number.slice(-2)}
+                          </AvatarFallback>
+                        </Avatar>
+                        <div className="flex-1 min-w-0">
+                          <div className="font-medium text-gray-900 truncate">{contact.user_name}</div>
+                          <div className="text-xs text-gray-500 truncate">+{contact.phone_number}</div>
+                        </div>
+                        <div className="text-xs text-gray-400 flex-shrink-0">
+                          {contact.last_activity}
+                        </div>
                       </div>
-                    </div>
-                    <div className="text-xs text-gray-500">
-                      {contact.last_activity}
-                    </div>
-                  </div>
-                </button>
-              </li>
-            ))}
-          </ul>
-        )}
+                    </button>
+                  </li>
+                ))}
+              {contacts.filter((contact) => {
+                const query = searchQuery.toLowerCase();
+                return (
+                  contact.user_name?.toLowerCase().includes(query) ||
+                  contact.phone_number.includes(query)
+                );
+              }).length === 0 && searchQuery !== '' && (
+                <li className="p-8 text-center text-gray-500 text-sm">No contacts match your search</li>
+              )}
+            </ul>
+          )}
         </div>
       </div>
 
       {/* Chat Area */}
-      <div className="w-2/3 flex flex-col h-full">
+      <div className="flex-1 flex flex-col h-full bg-[#efeae2] min-w-0 overflow-hidden">
         {selectedContact ? (
           <>
-            {/* Profile Header */}
-            <div className="p-4 border-b flex items-center justify-between">
+            {/* Chat Header */}
+            <div className="px-4 py-3 bg-white border-b border-gray-200 flex items-center justify-between shadow-sm">
               <div className="flex items-center">
                 {loadingProfile ? (
                   <div className="flex items-center space-x-3">
                     <Skeleton className="h-10 w-10 rounded-full" />
                     <div>
-                      <Skeleton className="h-4 w-32 mb-2" />
+                      <Skeleton className="h-4 w-32 mb-1" />
                       <Skeleton className="h-3 w-48" />
                     </div>
                   </div>
                 ) : profile ? (
                   <div className="flex items-center space-x-3">
-                    <Avatar>
+                    <Avatar className="h-10 w-10">
                       {profile.profile_image ? (
                         <AvatarImage src={`${profile.profile_image}`} />
                       ) : (
-                        <AvatarFallback>
+                        <AvatarFallback className="bg-gradient-to-br from-blue-400 to-blue-600 text-white font-medium">
                           {profile.contact_name.charAt(0)}
                         </AvatarFallback>
                       )}
                     </Avatar>
                     <div>
-                      <div className="font-bold">{profile.contact_name}</div>
-                      <div className="text-sm text-gray-500">{profile.description}</div>
+                      <div className="font-semibold text-gray-900">{profile.contact_name}</div>
+                      <div className="text-xs text-gray-500">{profile.description}</div>
                     </div>
                   </div>
                 ) : (
-                  <div className="text-red-500">Failed to load profile</div>
+                  <div className="text-red-500 text-sm">Failed to load profile</div>
                 )}
               </div>
-              
-              <button
-                onClick={handleToggleBot}
-                disabled={loadingBotStatus}
-                className={`px-4 py-2 rounded-lg ${
-                  botDisabled 
-                    ? 'bg-green-500 hover:bg-green-600 text-white' 
-                    : 'bg-red-500 hover:bg-red-600 text-white'
-                } ${loadingBotStatus ? 'opacity-50 cursor-not-allowed' : ''}`}
-              >
-                {loadingBotStatus ? 'Loading...' : botDisabled ? 'Turn On Bot' : 'Turn Off Bot'}
-              </button>
+
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={handleToggleBot}
+                  disabled={loadingBotStatus}
+                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+                    botDisabled
+                      ? 'bg-green-500 hover:bg-green-600 text-white shadow-sm hover:shadow'
+                      : 'bg-red-500 hover:bg-red-600 text-white shadow-sm hover:shadow'
+                  } ${loadingBotStatus ? 'opacity-50 cursor-not-allowed' : ''}`}
+                >
+                  {loadingBotStatus ? '...' : botDisabled ? 'Turn On Bot' : 'Turn Off Bot'}
+                </button>
+              </div>
             </div>
 
-            {/* Chat History */}
-            <div className="h-[calc(100vh-200px)] overflow-y-auto p-4 bg-gray-50">
+            {/* Chat Messages */}
+            <div className="flex-1 overflow-y-auto px-4 py-4 overflow-x-hidden">
               {loadingChat ? (
                 <div className="space-y-4">
                   {[...Array(5)].map((_, i) => (
@@ -282,85 +318,115 @@ const ChatPage = () => {
                   ))}
                 </div>
               ) : chatHistory.length === 0 ? (
-                <div className="h-full flex items-center justify-center text-gray-500">
-                  No messages found
+                <div className="h-full flex items-center justify-center">
+                  <div className="text-center text-gray-500">
+                    <svg className="mx-auto h-16 w-16 text-gray-300 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                    </svg>
+                    <p className="text-sm">No messages yet</p>
+                    <p className="text-xs text-gray-400 mt-1">Start a conversation</p>
+                  </div>
                 </div>
               ) : (
-                chatHistory.map((item, index) => {
-                  if (item.role === 'session') {
-                    return (
-                      <div key={`session-${index}`} className="my-6 flex items-center">
-                        <div className="flex-grow border-t border-gray-300"></div>
-                        <div className="mx-4 text-xs text-gray-500 font-mono">
-                          Session: {item.content}
+                <div className="space-y-1">
+                  {chatHistory.map((item, index) => {
+                    if (item.role === 'session') {
+                      return (
+                        <div key={`session-${index}`} className="my-8 flex items-center">
+                          <div className="flex-grow border-t border-gray-300"></div>
+                          <div className="mx-4 text-xs text-gray-500 font-medium bg-white px-3 py-1 rounded-full shadow-sm">
+                            {item.content}
+                          </div>
+                          <div className="flex-grow border-t border-gray-300"></div>
                         </div>
-                        <div className="flex-grow border-t border-gray-300"></div>
-                      </div>
-                    );
-                  }
-                  
-                  return (
-                    <div
-                      key={index}
-                      className={`mb-4 flex ${
-                        item.role === 'user' ? 'justify-start' : 'justify-end'
-                      }`}
-                    >
+                      );
+                    }
+
+                    const isUser = item.role === 'user';
+
+                    return (
                       <div
-                        className={`max-w-xs md:max-w-md px-4 py-2 rounded-lg ${
-                          item.role === 'user'
-                            ? 'bg-white border'
-                            : 'bg-blue-500 text-white'
-                        }`}
+                        key={index}
+                        className={`flex ${isUser ? 'justify-start' : 'justify-end'}`}
                       >
-                        <div dangerouslySetInnerHTML={{
-                          __html: item.content
-                            .replace(/&/g, '&')
-                            .replace(/</g, '<')
-                            .replace(/>/g, '>')
-                            .replace(/\*([^*]+)\*/g, '<strong>$1</strong>')
-                            .replace(/_([^_]+)_/g, '<em>$1</em>')
-                            .replace(/`([^`]+)`/g, '<code>$1</code>')
-                            .replace(/\n/g, '<br />')
-                        }} />
-                        {item.timestamp && (
+                        <div
+                          className={`max-w-[65%] rounded-lg shadow-sm px-3 py-2 break-words overflow-wrap-anywhere ${
+                            isUser
+                              ? 'bg-white text-gray-900 rounded-tl-none'
+                              : 'bg-blue-500 text-white rounded-tr-none'
+                          }`}
+                        >
                           <div
-                            className={`text-xs mt-1 ${
-                              item.role === 'user' ? 'text-gray-500' : 'text-blue-100'
+                            className="text-sm leading-relaxed whitespace-pre-wrap"
+                            dangerouslySetInnerHTML={{
+                              __html: item.content
+                                .replace(/&/g, '&')
+                                .replace(/</g, '<')
+                                .replace(/>/g, '>')
+                                .replace(/\*([^*]+)\*/g, '<strong>$1</strong>')
+                                .replace(/_([^_]+)_/g, '<em>$1</em>')
+                                .replace(/`([^`]+)`/g, '<code class="bg-black/20 px-1 rounded">$1</code>')
+                                .replace(/\n/g, '<br />')
+                            }}
+                          />
+                          <div
+                            className={`text-[10px] mt-1 text-right ${
+                              isUser ? 'text-gray-400' : 'text-blue-100'
                             }`}
                           >
                             {formatTimestamp(item.timestamp)}
                           </div>
-                        )}
+                        </div>
                       </div>
-                    </div>
-                  );
-                })
+                    );
+                  })}
+                </div>
               )}
             </div>
 
             {/* Message Input */}
-            <div className="p-4 border-t flex items-center">
-              <input
-                type="text"
-                value={messageInput}
-                onChange={(e) => setMessageInput(e.target.value)}
-                placeholder="Type your message..."
-                className="flex-1 border rounded-l-lg p-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                onKeyDown={(e) => e.key === 'Enter' && handleSendMessage()}
-              />
-              <button
-                onClick={handleSendMessage}
-                disabled={!messageInput.trim()}
-                className="bg-blue-500 text-white px-6 py-3 rounded-r-lg hover:bg-blue-600 disabled:bg-gray-300 disabled:cursor-not-allowed"
-              >
-                Send
-              </button>
+            <div className="px-4 py-3 bg-white border-t border-gray-200">
+              <div className="flex items-center gap-3">
+                <button className="p-2 text-gray-400 hover:text-gray-600 transition">
+                  <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                </button>
+                <div className="flex-1 relative">
+                  <input
+                    type="text"
+                    value={messageInput}
+                    onChange={(e) => setMessageInput(e.target.value)}
+                    placeholder="Type a message"
+                    className="w-full bg-gray-100 rounded-lg py-2.5 px-4 pr-12 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition"
+                    onKeyDown={(e) => e.key === 'Enter' && handleSendMessage()}
+                  />
+                </div>
+                <button
+                  onClick={handleSendMessage}
+                  disabled={!messageInput.trim()}
+                  className={`p-2.5 rounded-lg transition-all ${
+                    messageInput.trim()
+                      ? 'bg-blue-500 text-white hover:bg-blue-600 shadow-sm hover:shadow'
+                      : 'bg-gray-200 text-gray-400 cursor-not-allowed'
+                  }`}
+                >
+                  <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+                  </svg>
+                </button>
+              </div>
             </div>
           </>
         ) : (
-          <div className="h-full flex items-center justify-center text-gray-500">
-            Select a contact to view chat history
+          <div className="h-full flex items-center justify-center bg-[#efeae2]">
+            <div className="text-center text-gray-500">
+              <svg className="mx-auto h-24 w-24 text-gray-300 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+              </svg>
+              <h3 className="text-lg font-medium text-gray-700 mb-1">OrinAI Web</h3>
+              <p className="text-sm text-gray-500">Select a contact to start chatting</p>
+            </div>
           </div>
         )}
       </div>
