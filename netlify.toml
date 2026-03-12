@@ -15,70 +15,108 @@
   status = 200
   force = true
 
-# ORINAI CHAT PORT 8080
+# ORINAI CHAT - agent routes
 [[redirects]]
-  from = "/agents*"
-  to = "https://orinai-dashboard-proxy-1056582462205.asia-southeast1.run.app/ai_chat/agents:splat"
+  from = "/agents/*"
+  to = "https://orinai-dashboard-proxy-1056582462205.asia-southeast1.run.app/ai_chat/agents/:splat"
   status = 200
   force = true
 
 [[redirects]]
-  from = "/whatsapp/number*"
-  to = "https://orinai-dashboard-proxy-1056582462205.asia-southeast1.run.app/ai_chat/whatsapp/number:splat"
+  from = "/agents"
+  to = "https://orinai-dashboard-proxy-1056582462205.asia-southeast1.run.app/ai_chat/agents"
   status = 200
   force = true
 
 [[redirects]]
-  from = "/tools*"
-  to = "https://orinai-dashboard-proxy-1056582462205.asia-southeast1.run.app/ai_chat/tools:splat"
-  status = 200
-  force = true
-
-# WA REPORT PORT 8000
-[[redirects]]
-  from = "/notification_setting*"
-  to = "https://orinai-dashboard-proxy-1056582462205.asia-southeast1.run.app/wa_report/notification_setting:splat"
+  from = "/whatsapp/number/*"
+  to = "https://orinai-dashboard-proxy-1056582462205.asia-southeast1.run.app/ai_chat/whatsapp/number/:splat"
   status = 200
   force = true
 
 [[redirects]]
-  from = "/send_message*"
-  to = "https://orinai-dashboard-proxy-1056582462205.asia-southeast1.run.app/wa_report/whatsapp/send_message:splat"
+  from = "/whatsapp/number"
+  to = "https://orinai-dashboard-proxy-1056582462205.asia-southeast1.run.app/ai_chat/whatsapp/number"
   status = 200
   force = true
 
 [[redirects]]
-  from = "/whatsapp/disable_agent*"
-  to = "https://orinai-dashboard-proxy-1056582462205.asia-southeast1.run.app/wa_report/whatsapp/disable_agent:splat"
+  from = "/tools/*"
+  to = "https://orinai-dashboard-proxy-1056582462205.asia-southeast1.run.app/ai_chat/tools/:splat"
   status = 200
   force = true
 
 [[redirects]]
-  from = "/whatsapp/contacts*"
-  to = "https://orinai-dashboard-proxy-1056582462205.asia-southeast1.run.app/wa_report/whatsapp/contacts:splat"
+  from = "/tools"
+  to = "https://orinai-dashboard-proxy-1056582462205.asia-southeast1.run.app/ai_chat/tools"
+  status = 200
+  force = true
+
+# WA REPORT - notification setting
+[[redirects]]
+  from = "/notification_setting/*"
+  to = "https://orinai-dashboard-proxy-1056582462205.asia-southeast1.run.app/wa_report/notification_setting/:splat"
   status = 200
   force = true
 
 [[redirects]]
-  from = "/whatsapp/chat_history*"
-  to = "https://orinai-dashboard-proxy-1056582462205.asia-southeast1.run.app/wa_report/whatsapp/chat_history:splat"
+  from = "/notification_setting"
+  to = "https://orinai-dashboard-proxy-1056582462205.asia-southeast1.run.app/wa_report/notification_setting"
+  status = 200
+  force = true
+
+# WA REPORT - send_message
+[[redirects]]
+  from = "/send_message/*"
+  to = "https://orinai-dashboard-proxy-1056582462205.asia-southeast1.run.app/wa_report/whatsapp/send_message/:splat"
   status = 200
   force = true
 
 [[redirects]]
-  from = "/whatsapp/profile*"
-  to = "https://orinai-dashboard-proxy-1056582462205.asia-southeast1.run.app/wa_report/whatsapp/profile:splat"
+  from = "/send_message"
+  to = "https://orinai-dashboard-proxy-1056582462205.asia-southeast1.run.app/wa_report/whatsapp/send_message"
+  status = 200
+  force = true
+
+# WA REPORT - whatsapp routes
+[[redirects]]
+  from = "/whatsapp/contacts"
+  to = "https://orinai-dashboard-proxy-1056582462205.asia-southeast1.run.app/wa_report/whatsapp/contacts"
   status = 200
   force = true
 
 [[redirects]]
-  from = "/whatsapp/dummy_notification*"
-  to = "https://orinai-dashboard-proxy-1056582462205.asia-southeast1.run.app/wa_report/whatsapp/dummy_notification:splat"
+  from = "/whatsapp/chat_history/*"
+  to = "https://orinai-dashboard-proxy-1056582462205.asia-southeast1.run.app/wa_report/whatsapp/chat_history/:splat"
   status = 200
   force = true
 
 [[redirects]]
-  from = "/whatsapp/phone_to_lid*"
-  to = "https://orinai-dashboard-proxy-1056582462205.asia-southeast1.run.app/wa_report/whatsapp/phone_to_lid:splat"
+  from = "/whatsapp/profile/*"
+  to = "https://orinai-dashboard-proxy-1056582462205.asia-southeast1.run.app/wa_report/whatsapp/profile/:splat"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/whatsapp/disable_agent/*"
+  to = "https://orinai-dashboard-proxy-1056582462205.asia-southeast1.run.app/wa_report/whatsapp/disable_agent/:splat"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/whatsapp/disable_agent"
+  to = "https://orinai-dashboard-proxy-1056582462205.asia-southeast1.run.app/wa_report/whatsapp/disable_agent"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/whatsapp/dummy_notification"
+  to = "https://orinai-dashboard-proxy-1056582462205.asia-southeast1.run.app/wa_report/whatsapp/dummy_notification"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/whatsapp/phone_to_lid"
+  to = "https://orinai-dashboard-proxy-1056582462205.asia-southeast1.run.app/wa_report/whatsapp/phone_to_lid"
   status = 200
   force = true
