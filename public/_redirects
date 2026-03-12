@@ -35,3 +35,6 @@
 /whatsapp/dummy_notification https://orinai-dashboard-proxy-1056582462205.asia-southeast1.run.app/wa_report/whatsapp/dummy_notification 200!
 
 /whatsapp/phone_to_lid https://orinai-dashboard-proxy-1056582462205.asia-southeast1.run.app/wa_report/whatsapp/phone_to_lid 200!
+
+# SPA fallback - must be last!
+/* /index.html 200
