@@ -243,7 +243,7 @@ export async function getWhatsappProfile(
 
 export const sendWhatsappMessage = async (to: string, message: string): Promise<any> => {
   to = to + "@lid"
-  const response = await fetch('/send-message', {
+  const response = await fetch('/send_message', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',

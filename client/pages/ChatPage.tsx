@@ -15,6 +15,8 @@ import {
 
 interface Contact {
   phone_number: string;
+  user_name: string;
+  last_activity: string;
 }
 
 interface Message {
@@ -170,12 +172,14 @@ const ChatPage = () => {
   };
 
   return (
-    <div className="flex h-full">
+    <div className="flex h-screen">
       {/* Contact List */}
-      <div className="w-1/3 border-r overflow-y-auto">
+      <div className="w-1/3 border-r flex flex-col h-full">
         <div className="p-4 border-b">
           <h2 className="text-xl font-bold">Chats</h2>
         </div>
+
+        <div className="flex-1 overflow-y-auto">
         
         {loadingContacts ? (
           <div className="p-4 space-y-3">
@@ -195,14 +199,19 @@ const ChatPage = () => {
                   }`}
                   onClick={() => setSelectedContact(contact.phone_number)}
                 >
-                  <div className="flex items-center">
-                    <Avatar className="mr-3">
-                      <AvatarFallback>
-                        {contact.phone_number.slice(-2)}
-                      </AvatarFallback>
-                    </Avatar>
-                    <div>
-                      <div className="font-medium">+{contact.phone_number}</div>
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center">
+                      <Avatar className="mr-3">
+                        <AvatarFallback>
+                          {contact.user_name?.charAt(0)?.toUpperCase() || contact.phone_number.slice(-2)}
+                        </AvatarFallback>
+                      </Avatar>
+                      <div>
+                        <div className="font-medium">{contact.user_name} (+{contact.phone_number})</div>
+                      </div>
+                    </div>
+                    <div className="text-xs text-gray-500">
+                      {contact.last_activity}
                     </div>
                   </div>
                 </button>
@@ -210,6 +219,7 @@ const ChatPage = () => {
             ))}
           </ul>
         )}
+        </div>
       </div>
 
       {/* Chat Area */}
@@ -293,14 +303,14 @@ const ChatPage = () => {
                     <div
                       key={index}
                       className={`mb-4 flex ${
-                        item.role === 'user' ? 'justify-end' : 'justify-start'
+                        item.role === 'user' ? 'justify-start' : 'justify-end'
                       }`}
                     >
                       <div
                         className={`max-w-xs md:max-w-md px-4 py-2 rounded-lg ${
                           item.role === 'user'
-                            ? 'bg-blue-500 text-white'
-                            : 'bg-white border'
+                            ? 'bg-white border'
+                            : 'bg-blue-500 text-white'
                         }`}
                       >
                         <div dangerouslySetInnerHTML={{
@@ -316,7 +326,7 @@ const ChatPage = () => {
                         {item.timestamp && (
                           <div
                             className={`text-xs mt-1 ${
-                              item.role === 'user' ? 'text-blue-100' : 'text-gray-500'
+                              item.role === 'user' ? 'text-gray-500' : 'text-blue-100'
                             }`}
                           >
                             {formatTimestamp(item.timestamp)}
