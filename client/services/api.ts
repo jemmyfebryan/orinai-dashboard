@@ -203,7 +203,7 @@ export async function getTools(): Promise<Record<string, any>> {
 
 export async function getWhatsappContacts(): Promise<{ phone_number: string; user_name: string; last_activity: string }[]> {
   try {
-    const res = await fetch('/whatsapp/contacts', {
+    const res = await fetch('/contacts', {
       credentials: 'include'
     });
     if (!res.ok) throw new Error('Failed to fetch contacts');
@@ -217,7 +217,7 @@ export async function getWhatsappChatHistory(
   phoneNumber: string
 ): Promise<Array<{ role: string; content: string; timestamp?: number }>> {
   try {
-    const res = await fetch(`/whatsapp/chat_history/${phoneNumber}`, {
+    const res = await fetch(`/chat_history/${phoneNumber}`, {
       credentials: 'include'
     });
     if (!res.ok) throw new Error('Failed to fetch chat history');
@@ -231,7 +231,7 @@ export async function getWhatsappProfile(
   phoneNumber: string
 ): Promise<{ profile_image: string; contact_name: string; push_name: string; description: string }> {
   try {
-    const res = await fetch(`/whatsapp/profile/${phoneNumber}`, {
+    const res = await fetch(`/profile/${phoneNumber}`, {
       credentials: 'include'
     });
     if (!res.ok) throw new Error('Failed to fetch profile');
@@ -260,7 +260,7 @@ export const sendWhatsappMessage = async (to: string, message: string): Promise<
 
 // New function to get bot disable status
 export const getBotDisableStatus = async (phoneNumber: string): Promise<{disable_agent: boolean}> => {
-  const response = await fetch(`/whatsapp/disable_agent/${phoneNumber}`, {
+  const response = await fetch(`/disable_agent/${phoneNumber}`, {
     credentials: 'include'
   });
   if (!response.ok) {
@@ -271,7 +271,7 @@ export const getBotDisableStatus = async (phoneNumber: string): Promise<{disable
 
 // New function to update bot disable status
 export const updateBotDisableStatus = async (phoneNumber: string, disableAgent: boolean): Promise<any> => {
-  const response = await fetch('/whatsapp/disable_agent', {
+  const response = await fetch('/disable_agent', {
     method: 'PUT',
     headers: {
       'Content-Type': 'application/json',

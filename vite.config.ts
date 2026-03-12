@@ -102,32 +102,32 @@ export default defineConfig(({ mode }) => ({
         changeOrigin: true,
         secure: false,
       },
-      '/whatsapp/disable_agent': {
-        target: 'https://orinai-dashboard-proxy-1056582462205.asia-southeast1.run.app/wa_report',
-        changeOrigin: true,
-        secure: false,
-      },
-      '/whatsapp/contacts': {
+      '/disable_agent': {
         target: 'https://orinai-dashboard-proxy-1056582462205.asia-southeast1.run.app/wa_report/whatsapp',
         changeOrigin: true,
         secure: false,
       },
-      '/whatsapp/chat_history': {
-        target: 'https://orinai-dashboard-proxy-1056582462205.asia-southeast1.run.app/wa_report',
-        changeOrigin: true,
-        secure: false,
-      },
-      '/whatsapp/profile': {
+      '/contacts': {
         target: 'https://orinai-dashboard-proxy-1056582462205.asia-southeast1.run.app/wa_report/whatsapp',
         changeOrigin: true,
         secure: false,
       },
-      '/whatsapp/dummy_notification': {
+      '/chat_history': {
+        target: 'https://orinai-dashboard-proxy-1056582462205.asia-southeast1.run.app/wa_report/whatsapp',
+        changeOrigin: true,
+        secure: false,
+      },
+      '/profile': {
+        target: 'https://orinai-dashboard-proxy-1056582462205.asia-southeast1.run.app/wa_report/whatsapp',
+        changeOrigin: true,
+        secure: false,
+      },
+      '/dummy_notification': {
         target: 'https://orinai-dashboard-proxy-1056582462205.asia-southeast1.run.app/wa_report',
         changeOrigin: true,
         secure: false,
       },
-      '/whatsapp/phone_to_lid': {
+      '/phone_to_lid': {
         target: 'https://orinai-dashboard-proxy-1056582462205.asia-southeast1.run.app/wa_report',
         changeOrigin: true,
         secure: false,

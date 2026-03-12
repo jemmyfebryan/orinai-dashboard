@@ -44,6 +44,7 @@ const ChatPage = () => {
   const [botDisabled, setBotDisabled] = useState(false);
   const [loadingBotStatus, setLoadingBotStatus] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+  const [showContactList, setShowContactList] = useState(true);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -123,6 +124,15 @@ const ChatPage = () => {
     return format(new Date(timestamp * 1000), 'HH:mm', { locale: id });
   };
 
+  const handleContactSelect = (phoneNumber: string) => {
+    setSelectedContact(phoneNumber);
+    setShowContactList(false);
+  };
+
+  const handleBackToContacts = () => {
+    setShowContactList(true);
+  };
+
   const handleToggleBot = async () => {
     if (!selectedContact) return;
 
@@ -176,7 +186,7 @@ const ChatPage = () => {
   return (
     <div className="flex h-screen overflow-hidden bg-white">
       {/* Contact List */}
-      <div className="w-[400px] min-w-0 border-r border-gray-200 flex flex-col h-full bg-white flex-shrink-0">
+      <div className={`w-full md:w-[400px] min-w-0 border-r border-gray-200 flex flex-col h-full bg-white flex-shrink-0 ${!showContactList && selectedContact ? 'hidden md:flex' : 'flex'}`}>
         {/* Header */}
         <div className="px-4 py-3 bg-gray-50 border-b border-gray-200">
           <h2 className="text-lg font-semibold text-gray-800">Chats</h2>
@@ -224,7 +234,7 @@ const ChatPage = () => {
                       className={`w-full text-left px-4 py-3 hover:bg-gray-50 transition-colors ${
                         selectedContact === contact.phone_number ? 'bg-blue-50' : ''
                       }`}
-                      onClick={() => setSelectedContact(contact.phone_number)}
+                      onClick={() => handleContactSelect(contact.phone_number)}
                     >
                       <div className="flex items-center gap-3">
                         <Avatar className="h-12 w-12 flex-shrink-0">
@@ -236,7 +246,7 @@ const ChatPage = () => {
                           <div className="font-medium text-gray-900 truncate">{contact.user_name}</div>
                           <div className="text-xs text-gray-500 truncate">+{contact.phone_number}</div>
                         </div>
-                        <div className="text-xs text-gray-400 flex-shrink-0">
+                        <div className="text-xs text-gray-400 flex-shrink-0 hidden sm:block">
                           {contact.last_activity}
                         </div>
                       </div>
@@ -258,23 +268,33 @@ const ChatPage = () => {
       </div>
 
       {/* Chat Area */}
-      <div className="flex-1 flex flex-col h-full bg-[#efeae2] min-w-0 overflow-hidden">
+      <div className={`flex-1 flex flex-col h-full bg-[#efeae2] min-w-0 overflow-hidden ${showContactList && !selectedContact ? 'hidden md:flex' : 'flex'}`}>
         {selectedContact ? (
           <>
             {/* Chat Header */}
-            <div className="px-4 py-3 bg-white border-b border-gray-200 flex items-center justify-between shadow-sm">
+            <div className="px-3 py-2 md:px-4 md:py-3 bg-white border-b border-gray-200 flex items-center justify-between shadow-sm">
               <div className="flex items-center">
+                {/* Back Button - Mobile Only */}
+                <button
+                  onClick={handleBackToContacts}
+                  className="md:hidden mr-2 p-1 text-gray-600 hover:bg-gray-100 rounded-lg"
+                >
+                  <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                  </svg>
+                </button>
+
                 {loadingProfile ? (
-                  <div className="flex items-center space-x-3">
-                    <Skeleton className="h-10 w-10 rounded-full" />
+                  <div className="flex items-center space-x-2 md:space-x-3">
+                    <Skeleton className="h-9 w-9 md:h-10 md:w-10 rounded-full" />
                     <div>
-                      <Skeleton className="h-4 w-32 mb-1" />
-                      <Skeleton className="h-3 w-48" />
+                      <Skeleton className="h-4 w-24 md:w-32 mb-1" />
+                      <Skeleton className="h-3 w-32 md:w-48" />
                     </div>
                   </div>
                 ) : profile ? (
-                  <div className="flex items-center space-x-3">
-                    <Avatar className="h-10 w-10">
+                  <div className="flex items-center space-x-2 md:space-x-3">
+                    <Avatar className="h-9 w-9 md:h-10 md:w-10">
                       {profile.profile_image ? (
                         <AvatarImage src={`${profile.profile_image}`} />
                       ) : (
@@ -283,9 +303,9 @@ const ChatPage = () => {
                         </AvatarFallback>
                       )}
                     </Avatar>
-                    <div>
-                      <div className="font-semibold text-gray-900">{profile.push_name}</div>
-                      <div className="text-xs text-gray-500">{profile.description}</div>
+                    <div className="min-w-0">
+                      <div className="font-semibold text-gray-900 text-sm md:text-base truncate">{profile.push_name}</div>
+                      <div className="text-xs text-gray-500 truncate hidden sm:block">{profile.description}</div>
                     </div>
                   </div>
                 ) : (
@@ -297,30 +317,30 @@ const ChatPage = () => {
                 <button
                   onClick={handleToggleBot}
                   disabled={loadingBotStatus}
-                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+                  className={`px-2 md:px-4 py-2 rounded-lg text-xs md:text-sm font-medium transition-all ${
                     botDisabled
                       ? 'bg-green-500 hover:bg-green-600 text-white shadow-sm hover:shadow'
                       : 'bg-red-500 hover:bg-red-600 text-white shadow-sm hover:shadow'
                   } ${loadingBotStatus ? 'opacity-50 cursor-not-allowed' : ''}`}
                 >
-                  {loadingBotStatus ? '...' : botDisabled ? 'Turn On Bot' : 'Turn Off Bot'}
+                  {loadingBotStatus ? '...' : botDisabled ? 'On' : 'Off'}
                 </button>
               </div>
             </div>
 
             {/* Chat Messages */}
-            <div className="flex-1 overflow-y-auto px-4 py-4 overflow-x-hidden">
+            <div className="flex-1 overflow-y-auto px-2 md:px-4 py-2 md:py-4 overflow-x-hidden">
               {loadingChat ? (
                 <div className="space-y-4">
                   {[...Array(5)].map((_, i) => (
                     <div key={i} className="flex justify-end">
-                      <Skeleton className="h-16 w-64 rounded-lg" />
+                      <Skeleton className="h-16 w-48 md:w-64 rounded-lg" />
                     </div>
                   ))}
                 </div>
               ) : chatHistory.length === 0 ? (
                 <div className="h-full flex items-center justify-center">
-                  <div className="text-center text-gray-500">
+                  <div className="text-center text-gray-500 px-4">
                     <svg className="mx-auto h-16 w-16 text-gray-300 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
                     </svg>
@@ -333,9 +353,9 @@ const ChatPage = () => {
                   {chatHistory.map((item, index) => {
                     if (item.role === 'session') {
                       return (
-                        <div key={`session-${index}`} className="my-8 flex items-center">
+                        <div key={`session-${index}`} className="my-6 md:my-8 flex items-center">
                           <div className="flex-grow border-t border-gray-300"></div>
-                          <div className="mx-4 text-xs text-gray-500 font-medium bg-white px-3 py-1 rounded-full shadow-sm">
+                          <div className="mx-2 md:mx-4 text-xs text-gray-500 font-medium bg-white px-2 md:px-3 py-1 rounded-full shadow-sm">
                             {item.content}
                           </div>
                           <div className="flex-grow border-t border-gray-300"></div>
@@ -351,7 +371,7 @@ const ChatPage = () => {
                         className={`flex ${isUser ? 'justify-start' : 'justify-end'}`}
                       >
                         <div
-                          className={`max-w-[65%] rounded-lg shadow-sm px-3 py-2 break-words overflow-wrap-anywhere ${
+                          className={`max-w-[85%] md:max-w-[65%] rounded-lg shadow-sm px-2.5 md:px-3 py-2 break-words overflow-wrap-anywhere ${
                             isUser
                               ? 'bg-white text-gray-900 rounded-tl-none'
                               : 'bg-blue-500 text-white rounded-tr-none'
@@ -386,9 +406,9 @@ const ChatPage = () => {
             </div>
 
             {/* Message Input */}
-            <div className="px-4 py-3 bg-white border-t border-gray-200">
-              <div className="flex items-center gap-3">
-                <button className="p-2 text-gray-400 hover:text-gray-600 transition">
+            <div className="px-2 md:px-4 py-2 md:py-3 bg-white border-t border-gray-200">
+              <div className="flex items-center gap-2">
+                <button className="hidden md:block p-2 text-gray-400 hover:text-gray-600 transition">
                   <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                   </svg>
@@ -399,14 +419,14 @@ const ChatPage = () => {
                     value={messageInput}
                     onChange={(e) => setMessageInput(e.target.value)}
                     placeholder="Type a message"
-                    className="w-full bg-gray-100 rounded-lg py-2.5 px-4 pr-12 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition"
+                    className="w-full bg-gray-100 rounded-lg py-2 md:py-2.5 px-3 md:px-4 pr-10 md:pr-12 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition"
                     onKeyDown={(e) => e.key === 'Enter' && handleSendMessage()}
                   />
                 </div>
                 <button
                   onClick={handleSendMessage}
                   disabled={!messageInput.trim()}
-                  className={`p-2.5 rounded-lg transition-all ${
+                  className={`p-2 md:p-2.5 rounded-lg transition-all ${
                     messageInput.trim()
                       ? 'bg-blue-500 text-white hover:bg-blue-600 shadow-sm hover:shadow'
                       : 'bg-gray-200 text-gray-400 cursor-not-allowed'
@@ -420,12 +440,12 @@ const ChatPage = () => {
             </div>
           </>
         ) : (
-          <div className="h-full flex items-center justify-center bg-[#efeae2]">
-            <div className="text-center text-gray-500">
-              <svg className="mx-auto h-24 w-24 text-gray-300 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <div className="h-full flex items-center justify-center bg-[#efeae2] hidden md:flex">
+            <div className="text-center text-gray-500 px-4">
+              <svg className="mx-auto h-20 w-20 md:h-24 md:w-24 text-gray-300 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
               </svg>
-              <h3 className="text-lg font-medium text-gray-700 mb-1">OrinAI Web</h3>
+              <h3 className="text-base md:text-lg font-medium text-gray-700 mb-1">OrinAI Web</h3>
               <p className="text-sm text-gray-500">Select a contact to start chatting</p>
             </div>
           </div>
