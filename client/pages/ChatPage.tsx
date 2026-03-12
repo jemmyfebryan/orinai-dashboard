@@ -28,6 +28,7 @@ interface Message {
 interface Profile {
   profile_image: string;
   contact_name: string;
+  push_name: string;
   description: string;
 }
 
@@ -278,7 +279,7 @@ const ChatPage = () => {
                         <AvatarImage src={`${profile.profile_image}`} />
                       ) : (
                         <AvatarFallback className="bg-gradient-to-br from-blue-400 to-blue-600 text-white font-medium">
-                          {profile.contact_name.charAt(0)}
+                          {profile.push_name.charAt(0)}
                         </AvatarFallback>
                       )}
                     </Avatar>

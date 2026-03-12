@@ -201,7 +201,7 @@ export async function getTools(): Promise<Record<string, any>> {
   // }
 }
 
-export async function getWhatsappContacts(): Promise<{ phone_number: string }[]> {
+export async function getWhatsappContacts(): Promise<{ phone_number: string; user_name: string; last_activity: string }[]> {
   try {
     const res = await fetch('/whatsapp/contacts', {
       credentials: 'include'
@@ -229,7 +229,7 @@ export async function getWhatsappChatHistory(
 
 export async function getWhatsappProfile(
   phoneNumber: string
-): Promise<{ profile_image: string; contact_name: string; description: string }> {
+): Promise<{ profile_image: string; contact_name: string; push_name: string; description: string }> {
   try {
     const res = await fetch(`/whatsapp/profile/${phoneNumber}`, {
       credentials: 'include'
