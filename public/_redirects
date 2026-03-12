@@ -1,0 +1,37 @@
+# API redirect
+/api/* /.netlify/functions/api/:splat 200!
+
+# ORINAI CHAT - target: /ai_chat
+/agents/* https://orinai-dashboard-proxy-1056582462205.asia-southeast1.run.app/ai_chat/agents/:splat 200!
+/agents https://orinai-dashboard-proxy-1056582462205.asia-southeast1.run.app/ai_chat/agents 200!
+
+/whatsapp/number/* https://orinai-dashboard-proxy-1056582462205.asia-southeast1.run.app/ai_chat/whatsapp/number/:splat 200!
+/whatsapp/number https://orinai-dashboard-proxy-1056582462205.asia-southeast1.run.app/ai_chat/whatsapp/number 200!
+
+/tools/* https://orinai-dashboard-proxy-1056582462205.asia-southeast1.run.app/ai_chat/tools/:splat 200!
+/tools https://orinai-dashboard-proxy-1056582462205.asia-southeast1.run.app/ai_chat/tools 200!
+
+# WA REPORT - notification_setting: target: /wa_report
+/notification_setting/* https://orinai-dashboard-proxy-1056582462205.asia-southeast1.run.app/wa_report/notification_setting/:splat 200!
+/notification_setting https://orinai-dashboard-proxy-1056582462205.asia-southeast1.run.app/wa_report/notification_setting 200!
+
+# WA REPORT - send_message: target: /wa_report/whatsapp
+/send_message/* https://orinai-dashboard-proxy-1056582462205.asia-southeast1.run.app/wa_report/whatsapp/send_message/:splat 200!
+/send_message https://orinai-dashboard-proxy-1056582462205.asia-southeast1.run.app/wa_report/whatsapp/send_message 200!
+
+# WA REPORT - whatsapp routes
+/whatsapp/disable_agent/* https://orinai-dashboard-proxy-1056582462205.asia-southeast1.run.app/wa_report/whatsapp/disable_agent/:splat 200!
+/whatsapp/disable_agent https://orinai-dashboard-proxy-1056582462205.asia-southeast1.run.app/wa_report/whatsapp/disable_agent 200!
+
+/whatsapp/contacts/* https://orinai-dashboard-proxy-1056582462205.asia-southeast1.run.app/wa_report/whatsapp/contacts/:splat 200!
+/whatsapp/contacts https://orinai-dashboard-proxy-1056582462205.asia-southeast1.run.app/wa_report/whatsapp/contacts 200!
+
+/whatsapp/chat_history/* https://orinai-dashboard-proxy-1056582462205.asia-southeast1.run.app/wa_report/whatsapp/chat_history/:splat 200!
+/whatsapp/chat_history https://orinai-dashboard-proxy-1056582462205.asia-southeast1.run.app/wa_report/whatsapp/chat_history 200!
+
+/whatsapp/profile/* https://orinai-dashboard-proxy-1056582462205.asia-southeast1.run.app/wa_report/whatsapp/profile/:splat 200!
+/whatsapp/profile https://orinai-dashboard-proxy-1056582462205.asia-southeast1.run.app/wa_report/whatsapp/profile 200!
+
+/whatsapp/dummy_notification https://orinai-dashboard-proxy-1056582462205.asia-southeast1.run.app/wa_report/whatsapp/dummy_notification 200!
+
+/whatsapp/phone_to_lid https://orinai-dashboard-proxy-1056582462205.asia-southeast1.run.app/wa_report/whatsapp/phone_to_lid 200!
