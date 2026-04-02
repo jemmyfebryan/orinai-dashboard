@@ -132,6 +132,14 @@ export default defineConfig(({ mode }) => ({
         changeOrigin: true,
         secure: false,
       },
+
+      // SIORIN PORT 8081
+      '/siorin': {
+        target: 'http://localhost:8081',
+        changeOrigin: true,
+        secure: false,
+        rewrite: (path) => path.replace(/^\/siorin/, ''),
+      },
     },
   },
   build: {

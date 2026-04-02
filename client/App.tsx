@@ -13,6 +13,7 @@ import AgentEditor from "./pages/AgentEditor";
 import AgentAssignment from "./pages/AgentAssignment";
 import ChatPage from "./pages/ChatPage";
 import NotificationSetting from "./pages/NotificationSetting";
+import SiorinDashboard from "./pages/SiorinDashboard";
 import Layout from "./components/layout/Layout";
 
 const queryClient = new QueryClient();
@@ -92,6 +93,16 @@ const App = () => (
               <Protected>
                 <Layout>
                   <NotificationSetting />
+                </Layout>
+              </Protected>
+            }
+          />
+          <Route
+            path="/siorin"
+            element={
+              <Protected>
+                <Layout>
+                  <SiorinDashboard />
                 </Layout>
               </Protected>
             }
