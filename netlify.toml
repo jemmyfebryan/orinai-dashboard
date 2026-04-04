@@ -90,16 +90,16 @@
   status = 200
   force = true
 
-# SIORIN API - Use ai.orin.id/proxy/orin-ai-crm
+# SIORIN API - Remove /siorin prefix, send to ai.orin.id/proxy/orin-ai-crm
 [[redirects]]
   from = "/siorin/dashboard*"
-  to = "https://ai.orin.id/proxy/orin-ai-crm/siorin/dashboard:splat"
+  to = "https://ai.orin.id/proxy/orin-ai-crm/dashboard:splat"
   status = 200
   force = true
 
 [[redirects]]
   from = "/siorin/admin*"
-  to = "https://ai.orin.id/proxy/orin-ai-crm/siorin/admin:splat"
+  to = "https://ai.orin.id/proxy/orin-ai-crm/admin:splat"
   status = 200
   force = true
 
