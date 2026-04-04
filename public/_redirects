@@ -36,11 +36,9 @@
 
 /phone_to_lid https://orinai-dashboard-proxy-1056582462205.asia-southeast1.run.app/wa_report/whatsapp/phone_to_lid 200!
 
-# SIORIN API (remove /siorin prefix)
-/siorin/dashboard https://orinai-dashboard-proxy-1056582462205.asia-southeast1.run.app/dashboard 200!
-/siorin/admin/contacts/* https://orinai-dashboard-proxy-1056582462205.asia-southeast1.run.app/admin/contacts/:splat 200!
-/siorin/admin/prompts/* https://orinai-dashboard-proxy-1056582462205.asia-southeast1.run.app/admin/prompts/:splat 200!
-/siorin/admin/products/* https://orinai-dashboard-proxy-1056582462205.asia-southeast1.run.app/admin/products/:splat 200!
+# SIORIN API - Use ai.orin.id/proxy/orin-ai-crm
+/siorin/dashboard/* https://ai.orin.id/proxy/orin-ai-crm/siorin/dashboard/:splat 200!
+/siorin/admin/* https://ai.orin.id/proxy/orin-ai-crm/siorin/admin/:splat 200!
 
 # SPA fallback - must be last!
 /* /index.html 200
