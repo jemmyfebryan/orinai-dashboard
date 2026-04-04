@@ -90,9 +90,34 @@
   status = 200
   force = true
 
-# SIORIN - target: /proxy/orin-ai-crm (removes /siorin prefix)
+# SIORIN API - Specific API endpoints only (not frontend routes)
 [[redirects]]
-  from = "/siorin/*"
-  to = "https://ai.orin.id/proxy/orin-ai-crm/:splat"
+  from = "/siorin/dashboard"
+  to = "https://ai.orin.id/proxy/orin-ai-crm/dashboard"
   status = 200
   force = true
+
+[[redirects]]
+  from = "/siorin/admin/contacts"
+  to = "https://ai.orin.id/proxy/orin-ai-crm/admin/contacts"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/siorin/admin/prompts"
+  to = "https://ai.orin.id/proxy/orin-ai-crm/admin/prompts"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/siorin/admin/products"
+  to = "https://ai.orin.id/proxy/orin-ai-crm/admin/products"
+  status = 200
+  force = true
+
+# SPA fallback - must be last!
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+  force = false

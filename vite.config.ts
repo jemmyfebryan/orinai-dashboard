@@ -135,7 +135,7 @@ export default defineConfig(({ mode }) => ({
 
       // SIORIN PORT 8081
       '/siorin': {
-        target: 'http://localhost:8080/proxy/orin-ai-crm',
+        target: 'http://localhost:8081',
         changeOrigin: true,
         secure: false,
         rewrite: (path) => path.replace(/^\/siorin/, ''),
