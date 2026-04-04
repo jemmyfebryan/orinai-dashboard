@@ -90,29 +90,29 @@
   status = 200
   force = true
 
-# SIORIN API - Dashboard API
+# SIORIN API - Dashboard API (remove /siorin prefix)
 [[redirects]]
   from = "/siorin/dashboard"
-  to = "https://orinai-dashboard-proxy-1056582462205.asia-southeast1.run.app/siorin/dashboard"
+  to = "https://orinai-dashboard-proxy-1056582462205.asia-southeast1.run.app/dashboard"
   status = 200
   force = true
 
-# SIORIN API - Admin endpoints (with wildcard for subpaths)
+# SIORIN API - Admin endpoints (remove /siorin prefix)
 [[redirects]]
   from = "/siorin/admin/contacts*"
-  to = "https://orinai-dashboard-proxy-1056582462205.asia-southeast1.run.app/siorin/admin/contacts:splat"
+  to = "https://orinai-dashboard-proxy-1056582462205.asia-southeast1.run.app/admin/contacts:splat"
   status = 200
   force = true
 
 [[redirects]]
   from = "/siorin/admin/prompts*"
-  to = "https://orinai-dashboard-proxy-1056582462205.asia-southeast1.run.app/siorin/admin/prompts:splat"
+  to = "https://orinai-dashboard-proxy-1056582462205.asia-southeast1.run.app/admin/prompts:splat"
   status = 200
   force = true
 
 [[redirects]]
   from = "/siorin/admin/products*"
-  to = "https://orinai-dashboard-proxy-1056582462205.asia-southeast1.run.app/siorin/admin/products:splat"
+  to = "https://orinai-dashboard-proxy-1056582462205.asia-southeast1.run.app/admin/products:splat"
   status = 200
   force = true
 
