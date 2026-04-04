@@ -14,6 +14,8 @@ import AgentAssignment from "./pages/AgentAssignment";
 import ChatPage from "./pages/ChatPage";
 import NotificationSetting from "./pages/NotificationSetting";
 import SiorinDashboard from "./pages/SiorinDashboard";
+import SiorinAdmin from "./pages/SiorinAdmin";
+import SiorinChatHistory from "./pages/SiorinChatHistory";
 import Layout from "./components/layout/Layout";
 
 const queryClient = new QueryClient();
@@ -103,6 +105,26 @@ const App = () => (
               <Protected>
                 <Layout>
                   <SiorinDashboard />
+                </Layout>
+              </Protected>
+            }
+          />
+          <Route
+            path="/siorin/admin"
+            element={
+              <Protected>
+                <Layout>
+                  <SiorinAdmin />
+                </Layout>
+              </Protected>
+            }
+          />
+          <Route
+            path="/siorin/chat-history"
+            element={
+              <Protected>
+                <Layout>
+                  <SiorinChatHistory />
                 </Layout>
               </Protected>
             }

@@ -18,6 +18,8 @@ const orinCsLinks = [
 
 const siorinLinks = [
   { to: "/siorin", label: "Dashboard" },
+  { to: "/siorin/chat-history", label: "Chat History" },
+  { to: "/siorin/admin", label: "Admin Settings" },
 ];
 
 export default function Navbar() {

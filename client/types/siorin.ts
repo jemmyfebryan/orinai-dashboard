@@ -154,3 +154,122 @@ export interface DashboardResponse {
   product_inquiries: ProductInquiryCard;
   top_inquiries: TopInquiriesCard;
 }
+
+// Siorin Admin API Types
+
+export interface Product {
+  id: number;
+  name: string;
+  sku: string;
+  category: string;
+  subcategory: string;
+  vehicle_type: string;
+  description: string;
+  features: {
+    fitur_utama: string[];
+    bonus?: string;
+    server?: string;
+  };
+  price: string;
+  installation_type: string;
+  can_shutdown_engine: boolean;
+  is_realtime_tracking: boolean;
+  ecommerce_links: {
+    tokopedia?: string;
+    shopee?: string;
+  };
+  images: string[];
+  specifications: Record<string, unknown>;
+  compatibility: Record<string, unknown>;
+  is_active: boolean;
+  sort_order: number;
+}
+
+export interface ProductsResponse {
+  success: boolean;
+  products: Product[];
+  count: number;
+}
+
+export interface UpdateProductResponse {
+  success: boolean;
+  message: string;
+  product_id: number;
+}
+
+export interface ResetProductsResponse {
+  success: boolean;
+  message: string;
+  deleted: number;
+  created: number;
+  errors: string[];
+}
+
+export interface Prompt {
+  prompt_key: string;
+  prompt_name: string;
+  prompt_text: string;
+  description: string;
+  prompt_type: string;
+  is_active: boolean;
+}
+
+export interface PromptsResponse {
+  success: boolean;
+  prompts: Prompt[];
+  count: number;
+}
+
+export interface UpdatePromptResponse {
+  success: boolean;
+  message: string;
+  prompt_key: string;
+}
+
+export interface ResetPromptsResponse {
+  success: boolean;
+  message: string;
+  deleted: number;
+  created: number;
+  errors: string[];
+}
+
+// Chat History API Types
+
+export interface ContactItem {
+  id: number;
+  phone_number: string;
+  name: string | null;
+  domicile: string | null;
+  vehicle: string | null;
+  unit_qty: number | null;
+  human_takeover: boolean;
+  created_at: string | null;
+  last_message_time: string | null;
+}
+
+export interface ToggleHumanTakeoverResponse {
+  success: boolean;
+  message: string;
+  customer_id: number;
+  human_takeover: boolean;
+}
+
+export interface GetContactsResponse {
+  success: boolean;
+  contacts: ContactItem[];
+  count: number;
+}
+
+export interface ChatMessageItem {
+  role: 'user' | 'assistant';
+  content: string;
+  timestamp: string;
+}
+
+export interface GetChatHistoryResponse {
+  success: boolean;
+  customer_id: number;
+  messages: ChatMessageItem[];
+  count: number;
+}

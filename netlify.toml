@@ -89,3 +89,10 @@
   to = "https://orinai-dashboard-proxy-1056582462205.asia-southeast1.run.app/wa_report/whatsapp/phone_to_lid:splat"
   status = 200
   force = true
+
+# SIORIN - target: /proxy/orin-ai-crm (removes /siorin prefix)
+[[redirects]]
+  from = "/siorin/*"
+  to = "https://ai.orin.id/proxy/orin-ai-crm/:splat"
+  status = 200
+  force = true
