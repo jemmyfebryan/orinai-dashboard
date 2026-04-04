@@ -97,6 +97,25 @@
   status = 200
   force = true
 
+# SIORIN API - Admin endpoints (with wildcard for subpaths)
+[[redirects]]
+  from = "/siorin/admin/contacts*"
+  to = "https://orinai-dashboard-proxy-1056582462205.asia-southeast1.run.app/siorin/admin/contacts:splat"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/siorin/admin/prompts*"
+  to = "https://orinai-dashboard-proxy-1056582462205.asia-southeast1.run.app/siorin/admin/prompts:splat"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/siorin/admin/products*"
+  to = "https://orinai-dashboard-proxy-1056582462205.asia-southeast1.run.app/siorin/admin/products:splat"
+  status = 200
+  force = true
+
 # SPA fallback - must be last!
 [[redirects]]
   from = "/*"
