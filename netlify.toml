@@ -90,28 +90,28 @@
   status = 200
   force = true
 
-# SIORIN API - Specific API endpoints only (not frontend routes)
+# SIORIN API - Wildcards for API paths (won't catch exact frontend routes)
 [[redirects]]
-  from = "/siorin/dashboard"
-  to = "https://ai.orin.id/proxy/orin-ai-crm/dashboard"
+  from = "/siorin/dashboard*"
+  to = "https://ai.orin.id/proxy/orin-ai-crm/dashboard:splat"
   status = 200
   force = true
 
 [[redirects]]
-  from = "/siorin/admin/contacts"
-  to = "https://ai.orin.id/proxy/orin-ai-crm/admin/contacts"
+  from = "/siorin/admin/contacts*"
+  to = "https://ai.orin.id/proxy/orin-ai-crm/admin/contacts:splat"
   status = 200
   force = true
 
 [[redirects]]
-  from = "/siorin/admin/prompts"
-  to = "https://ai.orin.id/proxy/orin-ai-crm/admin/prompts"
+  from = "/siorin/admin/prompts*"
+  to = "https://ai.orin.id/proxy/orin-ai-crm/admin/prompts:splat"
   status = 200
   force = true
 
 [[redirects]]
-  from = "/siorin/admin/products"
-  to = "https://ai.orin.id/proxy/orin-ai-crm/admin/products"
+  from = "/siorin/admin/products*"
+  to = "https://ai.orin.id/proxy/orin-ai-crm/admin/products:splat"
   status = 200
   force = true
 
