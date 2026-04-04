@@ -110,7 +110,7 @@ const App = () => (
             }
           />
           <Route
-            path="/siorin/admin"
+            path="/siorin/admin-settings"
             element={
               <Protected>
                 <Layout>
