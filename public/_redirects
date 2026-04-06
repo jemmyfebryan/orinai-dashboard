@@ -39,6 +39,7 @@
 # SIORIN API - Remove /siorin prefix
 # Note: Dashboard needs trailing slash to avoid backend 307 redirect
 /siorin/dashboard https://ai.orin.id/proxy/orin-ai-crm/dashboard/ 200!
+/siorin/dashboard/ https://ai.orin.id/proxy/orin-ai-crm/dashboard/ 200!
 /siorin/dashboard/* https://ai.orin.id/proxy/orin-ai-crm/dashboard/:splat 200!
 /siorin/admin/* https://ai.orin.id/proxy/orin-ai-crm/admin/:splat 200!
 

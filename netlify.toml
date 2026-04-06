@@ -99,6 +99,12 @@
   force = true
 
 [[redirects]]
+  from = "/siorin/dashboard/"
+  to = "https://ai.orin.id/proxy/orin-ai-crm/dashboard/"
+  status = 200
+  force = true
+
+[[redirects]]
   from = "/siorin/dashboard/*"
   to = "https://ai.orin.id/proxy/orin-ai-crm/dashboard/:splat"
   status = 200
