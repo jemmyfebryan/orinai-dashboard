@@ -91,9 +91,16 @@
   force = true
 
 # SIORIN API - Remove /siorin prefix, send to ai.orin.id/proxy/orin-ai-crm
+# Note: Dashboard needs trailing slash to avoid backend 307 redirect
 [[redirects]]
-  from = "/siorin/dashboard*"
-  to = "https://ai.orin.id/proxy/orin-ai-crm/dashboard/:splat/"
+  from = "/siorin/dashboard"
+  to = "https://ai.orin.id/proxy/orin-ai-crm/dashboard/"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/siorin/dashboard/*"
+  to = "https://ai.orin.id/proxy/orin-ai-crm/dashboard/:splat"
   status = 200
   force = true
 
