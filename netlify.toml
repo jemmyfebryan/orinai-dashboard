@@ -93,7 +93,7 @@
 # SIORIN API - Remove /siorin prefix, send to ai.orin.id/proxy/orin-ai-crm
 [[redirects]]
   from = "/siorin/dashboard*"
-  to = "https://ai.orin.id/proxy/orin-ai-crm/dashboard:splat"
+  to = "https://ai.orin.id/proxy/orin-ai-crm/dashboard/:splat/"
   status = 200
   force = true
 
