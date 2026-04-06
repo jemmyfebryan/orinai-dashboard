@@ -36,11 +36,7 @@
 
 /phone_to_lid https://orinai-dashboard-proxy-1056582462205.asia-southeast1.run.app/wa_report/whatsapp/phone_to_lid 200!
 
-# SIORIN API - Remove /siorin prefix
-# Note: Dashboard needs trailing slash to avoid backend 307 redirect
-/siorin/dashboard https://ai.orin.id/proxy/orin-ai-crm/dashboard/ 200!
-/siorin/dashboard/ https://ai.orin.id/proxy/orin-ai-crm/dashboard/ 200!
-/siorin/dashboard/* https://ai.orin.id/proxy/orin-ai-crm/dashboard/:splat 200!
+# SIORIN API - Dashboard is proxied via Netlify function, admin routes use direct redirect
 /siorin/admin/* https://ai.orin.id/proxy/orin-ai-crm/admin/:splat 200!
 
 # SPA fallback - must be last!

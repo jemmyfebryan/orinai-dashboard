@@ -90,26 +90,7 @@
   status = 200
   force = true
 
-# SIORIN API - Remove /siorin prefix, send to ai.orin.id/proxy/orin-ai-crm
-# Note: Dashboard needs trailing slash to avoid backend 307 redirect
-[[redirects]]
-  from = "/siorin/dashboard"
-  to = "https://ai.orin.id/proxy/orin-ai-crm/dashboard/"
-  status = 200
-  force = true
-
-[[redirects]]
-  from = "/siorin/dashboard/"
-  to = "https://ai.orin.id/proxy/orin-ai-crm/dashboard/"
-  status = 200
-  force = true
-
-[[redirects]]
-  from = "/siorin/dashboard/*"
-  to = "https://ai.orin.id/proxy/orin-ai-crm/dashboard/:splat"
-  status = 200
-  force = true
-
+# SIORIN API - Dashboard is proxied via Netlify function, admin routes use direct redirect
 [[redirects]]
   from = "/siorin/admin*"
   to = "https://ai.orin.id/proxy/orin-ai-crm/admin:splat"

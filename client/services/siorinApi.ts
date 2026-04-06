@@ -16,7 +16,7 @@ import type {
 // Dashboard API
 export async function getSiorinDashboard(): Promise<DashboardResponse> {
   try {
-    const res = await fetch('/siorin/dashboard/', {
+    const res = await fetch('/siorin/dashboard', {
       credentials: 'include',
       headers: {
         'Content-Type': 'application/json',

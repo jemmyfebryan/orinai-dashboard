@@ -2,6 +2,7 @@ import "dotenv/config";
 import express from "express";
 import cors from "cors";
 import { handleDemo } from "./routes/demo";
+import { createProxyMiddleware } from "http-proxy-middleware";
 
 export function createServer() {
   const app = express();
@@ -255,8 +256,32 @@ export function createServer() {
     const ping = process.env.PING_MESSAGE ?? "ping";
     res.json({ message: ping });
   });
-  
+
   app.get("/api/demo", handleDemo);
+
+  // Siorin API proxy - use Express proxy to handle redirects properly
+  app.use("/siorin/dashboard", createProxyMiddleware({
+    target: "https://ai.orin.id/proxy/orin-ai-crm",
+    changeOrigin: true,
+    pathRewrite: {
+      "^/siorin/dashboard": "/dashboard",
+    },
+    // Follow redirects automatically
+    followRedirects: true,
+    onProxyReq: (proxyReq, req, res) => {
+      // Add headers
+      proxyReq.setHeader("Content-Type", "application/json");
+    },
+    onProxyRes: (proxyRes, req, res) => {
+      // Handle redirects by following them automatically
+      if (proxyRes.statusCode >= 300 && proxyRes.statusCode < 400 && proxyRes.headers.location) {
+        // If the redirect is relative, make it absolute
+        if (proxyRes.headers.location.startsWith("/")) {
+          proxyRes.headers.location = "https://ai.orin.id/proxy/orin-ai-crm" + proxyRes.headers.location;
+        }
+      }
+    },
+  }));
 
   return app;
 }
