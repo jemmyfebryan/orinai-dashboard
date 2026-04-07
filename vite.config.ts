@@ -132,8 +132,15 @@ export default defineConfig(({ mode }) => ({
         changeOrigin: true,
         secure: false,
       },
-      // Note: /siorin/dashboard is handled by Express server (see server/index.ts)
-      // /siorin/admin routes are proxied via Netlify redirects in production
+
+      // SIORIN - Local development proxy to localhost:8081
+      // In production, dashboard goes through Netlify function, admin routes go via redirects
+      '/siorin': {
+        target: 'http://localhost:8081',
+        changeOrigin: true,
+        secure: false,
+        rewrite: (path) => path.replace(/^\/siorin/, ''),
+      },
     },
   },
   build: {
