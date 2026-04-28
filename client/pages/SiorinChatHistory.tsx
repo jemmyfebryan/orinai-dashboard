@@ -51,7 +51,7 @@ export default function SiorinChatHistory() {
       const filtered = contacts.filter(
         (contact) =>
           (contact.name?.toLowerCase() || "").includes(searchTerm.toLowerCase()) ||
-          contact.phone_number.includes(searchTerm) ||
+          (contact.phone_number || "").includes(searchTerm) ||
           (contact.domicile?.toLowerCase() || "").includes(searchTerm.toLowerCase())
       );
       setFilteredContacts(filtered);
